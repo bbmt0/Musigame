@@ -1,0 +1,48 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.2'
+	id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.masterproject'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '21'
+}
+
+sourceSets {
+	acceptance {
+		java {
+			srcDir file('src/acceptance/java')
+		}
+	}
+}
+
+configurations {
+	acceptanceTestCompile.extendsFrom testCompile
+	acceptanceTestRuntime.extendsFrom testRuntime
+}
+
+task acceptance(type: Test) {
+	filter {
+		includeTestsMatching "com.masterproject.musigame.acceptance.MusigameAcceptanceTest"
+	}
+	outputs.upToDateWhen { false }
+	testClassesDirs = sourceSets.acceptance.output.classesDirs
+	classpath = sourceSets.acceptance.runtimeClasspath
+	systemProperty "project.root", "${projectDir}"
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
