@@ -13,7 +13,7 @@ class RoomIdTests {
     @Test
     @DisplayName("create RoomId when there is a valid pattern")
     void buildRoomIdWithCorrectPattern() {
-        String validRoomIdValue = "AbCd";
+        String validRoomIdValue = "AbCd1";
         RoomId roomId = RoomId.build(validRoomIdValue);
         assertEquals(validRoomIdValue, roomId.getValue());
     }
