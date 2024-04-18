@@ -51,3 +51,37 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: ./gradlew build sonar --info
+
+  unit-test:
+    name: Unit tests
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: bff
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: 'zulu'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+
+      - name: Copy Firebase Config
+        run: |
+          mkdir -p src/main/resources/configuration
+          echo '${{ secrets.FIREBASE_CONFIG }}' > src/main/resources/configuration/firebase_key.json
+
+      - name: Run unit tests
+        run: ./gradlew test
