@@ -1,11 +1,13 @@
 package com.masterproject.musigame.rooms;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 @Getter
+@Builder
 @AllArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class Player {
     private String username;
     private String profilePictureUrl;

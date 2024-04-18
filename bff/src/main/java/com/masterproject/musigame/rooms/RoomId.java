@@ -2,6 +2,7 @@ package com.masterproject.musigame.rooms;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.regex.Pattern;
 
@@ -16,9 +17,14 @@ public class RoomId {
         return new RoomId(roomIdValue);
     }
 
+    public static RoomId generateId() {
+        return RoomId.build(RandomStringUtils.random(5, true, true));
+    }
+
     private static boolean isValidRoomId(String roomIdValue) {
         Pattern roomIdPattern = Pattern.compile(ROOMID_PATTERN);
         return roomIdPattern.matcher(roomIdValue).matches();
     }
+
 
 }

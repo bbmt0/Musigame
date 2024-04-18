@@ -40,14 +40,17 @@ repositories {
     mavenCentral()
 }
 
-ext{
+ext {
     firebaseVersion = '9.2.0'
+    apacheCommonsVersion = '3.14.0'
     lombokVersion = '1.18.30'
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation "com.google.firebase:firebase-admin:${firebaseVersion}"
+    implementation "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
+
 
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 

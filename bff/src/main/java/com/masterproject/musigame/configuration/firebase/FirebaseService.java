@@ -14,7 +14,7 @@ import java.io.IOException;
 
 @Service
 public class FirebaseService {
-    FirebaseDatabase db;
+    Firestore db;
 
     public FirebaseService() throws IOException {
         File file = new File(
@@ -27,11 +27,10 @@ public class FirebaseService {
                 .build();
         FirebaseApp.initializeApp(options);
 
-        Firestore db = FirestoreClient.getFirestore();
-
+        db = FirestoreClient.getFirestore();
     }
 
-    public FirebaseDatabase getDb() {
+    public Firestore getDb() {
         return db;
     }
 }
