@@ -1,14 +1,19 @@
 name: SonarCloud
+
 on:
   push:
     branches:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
+
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: /bff
     steps:
       - uses: actions/checkout@v3
         with:
@@ -34,5 +39,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
         run: ./gradlew build sonar --info
