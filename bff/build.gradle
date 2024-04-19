@@ -66,8 +66,11 @@ tasks.named('test') {
 
 jacocoTestReport {
     reports {
-        xml.enabled true
-        html.enabled true
+        xml.required = true
+        xml.outputLocation = layout.buildDirectory.file("jacoco.xml")
+
+        html.required = true
+        html.outputLocation = layout.buildDirectory.dir("reports/jacoco")
     }
 }
 
