@@ -65,6 +65,7 @@ tasks.named('test') {
 
 
 jacocoTestReport {
+    getExecutionData().setFrom(fileTree(layout.buildDirectory.asFile.get()).include("/jacoco/*.exec"))
     reports {
         xml.required = true
         xml.outputLocation = layout.buildDirectory.file("jacoco.xml")
