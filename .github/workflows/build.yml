@@ -35,6 +35,10 @@ jobs:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
+      - name: Copy Firebase Config
+        run: |
+          mkdir -p src/main/resources/configuration
+          echo '${{ secrets.FIREBASE_CONFIG }}' > src/main/resources/configuration/firebase_key.json            
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
