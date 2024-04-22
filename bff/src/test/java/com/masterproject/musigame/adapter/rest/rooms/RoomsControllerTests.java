@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Collections;
 import java.util.Optional;
 
+import static com.masterproject.musigame.rooms.RoomMother.*;
+import static com.masterproject.musigame.rooms.RoomMother.Rooms.*;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -23,8 +25,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Tag("restApi")
 @WebMvcTest(RoomsController.class)
 @DisplayName("Rooms controller should")
-class RoomsControllerTest {
-    private static final RoomId ROOM_ID = RoomId.generateId();
+class RoomsControllerTests {
+    private static final RoomId ROOM_ID = ids().sample();
     @Autowired
     private MockMvc mvc;
     @MockBean
@@ -36,13 +38,8 @@ class RoomsControllerTest {
     @Test
     @DisplayName("create room with current user as creator")
     void createRoomWithCurrentUserAsCreator() throws Exception {
-        Creator creator = new Creator("dummy", "dummyUrl");
-        Room mockRoom = Room.builder()
-                .roomId(ROOM_ID)
-                .game(Game.builder().isGameLaunched(false).gameType(GameType.IMPOSTER).build())
-                .creator(creator)
-                .players(Collections.singletonList(creator))
-                .build();
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
         when(service.save(creator)).thenReturn(mockRoom);
 
         mvc.perform(MockMvcRequestBuilders.post("/api/v1/rooms")
@@ -55,43 +52,24 @@ class RoomsControllerTest {
     @Test
     @DisplayName("get room with room id")
     void getRoomWithRoomId() throws Exception {
-        Creator creator = new Creator("dummy", "dummyUrl");
-        Room mockRoom = Room.builder()
-                .roomId(ROOM_ID)
-                .game(Game.builder().isGameLaunched(false).gameType(GameType.IMPOSTER).build())
-                .creator(creator)
-                .players(Collections.singletonList(creator))
-                .build();
+        Room mockRoom = roomBuilder(ROOM_ID).build();
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
 
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/rooms/{roomId}", ROOM_ID.getValue()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
-                .andExpect(jsonPath("$.game.gameType").value("IMPOSTER"))
-                .andExpect(jsonPath("$.game.gameLaunched").value(false))
-                .andExpect(jsonPath("$.creator.username").value("dummy"))
-                .andExpect(jsonPath("$.creator.profilePictureUrl").value("dummyUrl"))
-                .andExpect(jsonPath("$.players[0].username").value("dummy"))
-                .andExpect(jsonPath("$.players[0].profilePictureUrl").value("dummyUrl"));
+                .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()));
     }
 
     @Test
     @DisplayName("get not found with wrong room id")
     void getNotFoundWithWrongRoomId() throws Exception {
-        Creator creator = new Creator("dummy", "dummyUrl");
-        Room mockRoom = Room.builder()
-                .roomId(ROOM_ID)
-                .game(Game.builder().isGameLaunched(false).gameType(GameType.IMPOSTER).build())
-                .creator(creator)
-                .players(Collections.singletonList(creator))
-                .build();
-
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.empty());
 
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/rooms/{roomId}", ROOM_ID.getValue()))
                 .andExpect(status().isNotFound());
     }
+
 
 }

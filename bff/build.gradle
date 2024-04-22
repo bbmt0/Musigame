@@ -45,6 +45,7 @@ ext {
     firebaseVersion = '9.2.0'
     apacheCommonsVersion = '3.14.0'
     lombokVersion = '1.18.30'
+    jqwikVersion = '1.8.4'
 }
 
 dependencies {
@@ -56,6 +57,7 @@ dependencies {
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "net.jqwik:jqwik:${jqwikVersion}"
 
 }
 
