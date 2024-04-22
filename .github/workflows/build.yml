@@ -34,7 +34,7 @@ jobs:
           mkdir -p src/main/resources/configuration
           echo '${{ secrets.FIREBASE_CONFIG }}' > src/main/resources/configuration/firebase_key.json            
       - name: Build and test
-        run: ./gradlew clean test sonarqube
+        run: ./gradlew clean build jacocoTestReport sonar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
