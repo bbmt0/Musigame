@@ -5,7 +5,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
-import com.google.firebase.database.FirebaseDatabase;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -14,7 +13,7 @@ import java.io.IOException;
 
 @Service
 public class FirebaseService {
-    FirebaseDatabase db;
+    Firestore db;
 
     public FirebaseService() throws IOException {
         File file = new File(
@@ -27,11 +26,10 @@ public class FirebaseService {
                 .build();
         FirebaseApp.initializeApp(options);
 
-        Firestore db = FirestoreClient.getFirestore();
-
+        db = FirestoreClient.getFirestore();
     }
 
-    public FirebaseDatabase getDb() {
+    public Firestore getDb() {
         return db;
     }
 }
