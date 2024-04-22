@@ -77,4 +77,21 @@ class RoomsControllerTest {
                 .andExpect(jsonPath("$.players[0].profilePictureUrl").value("dummyUrl"));
     }
 
+    @Test
+    @DisplayName("get not found with wrong room id")
+    void getNotFoundWithWrongRoomId() throws Exception {
+        Creator creator = new Creator("dummy", "dummyUrl");
+        Room mockRoom = Room.builder()
+                .roomId(ROOM_ID)
+                .game(Game.builder().isGameLaunched(false).gameType(GameType.IMPOSTER).build())
+                .creator(creator)
+                .players(Collections.singletonList(creator))
+                .build();
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/v1/rooms/{roomId}", ROOM_ID.getValue()))
+                .andExpect(status().isNotFound());
+    }
+
 }
