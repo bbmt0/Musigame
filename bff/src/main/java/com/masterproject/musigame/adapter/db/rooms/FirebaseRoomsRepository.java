@@ -32,7 +32,7 @@ public class FirebaseRoomsRepository implements RoomsRepository {
 
             return room;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to save room");
+            throw new FirebaseRoomDocumentNotSaved();
         }
     }
 
@@ -49,8 +49,9 @@ public class FirebaseRoomsRepository implements RoomsRepository {
                 return Optional.empty();
             }
         } catch (Exception e) {
-            return Optional.empty();
+            Thread.currentThread().interrupt();
         }
+        return Optional.empty();
     }
 
     private Room mapToRoom(DocumentSnapshot documentSnapshot, RoomId roomId) {

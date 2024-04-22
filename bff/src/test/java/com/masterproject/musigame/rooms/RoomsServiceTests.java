@@ -39,7 +39,7 @@ class RoomsServiceTests {
         var expected = service.save(creator);
 
         var actual = service.findById(expected.getRoomId());
-        assertThat(actual.get()).isEqualTo(expected);
+        assertThat(actual).contains(expected);
     }
 
     @Test
@@ -49,7 +49,7 @@ class RoomsServiceTests {
         service.save(creator);
 
         var actual = service.findById(ids().sample());
-        assertThat(actual.isEmpty());
+        assertThat(actual).isEmpty();
     }
 
 

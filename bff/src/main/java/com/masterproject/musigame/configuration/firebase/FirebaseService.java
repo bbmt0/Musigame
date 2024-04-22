@@ -5,7 +5,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
-import com.google.firebase.database.FirebaseDatabase;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
