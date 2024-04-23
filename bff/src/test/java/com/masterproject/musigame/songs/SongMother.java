@@ -1,6 +1,5 @@
 package com.masterproject.musigame.songs;
 
-import com.masterproject.musigame.rooms.RoomId;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import net.jqwik.api.Arbitraries;
@@ -19,6 +18,14 @@ public class SongMother {
         return Arbitraries.strings().ofMinLength(10).ofMaxLength(100);
     }
 
+    public static SongMother.Songs.Builder songBuilder() {
+        return new SongMother.Songs.Builder();
+    }
+
+    public static SongMother.Songs.Builder songBuilder(String title) {
+        return new SongMother.Songs.Builder(title);
+    }
+
     public static class Songs {
         public static Arbitrary<SongId> ids() {
             return Arbitraries.strings().ofMinLength(1).ofMaxLength(10).map(SongId::of);
@@ -33,6 +40,10 @@ public class SongMother {
             private String imageUrl = generateImageUrl().sample();
 
             Builder() {
+            }
+
+            Builder(String title) {
+                this.title = title;
             }
 
             public Song build() {
