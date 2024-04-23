@@ -2,9 +2,11 @@ package com.masterproject.musigame.adapter.db.songs;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonParseException;
 import com.masterproject.musigame.songs.Song;
 import com.masterproject.musigame.songs.SongId;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +33,8 @@ public class GeniusApiSongConverter {
                         .build()
                 );
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException e) {
+            throw new JsonParseException("Error parsing JSON response: " + e.getMessage(), e);
         }
         return songs;
     }
