@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Tag("unitTest")
 @Tag("converter")
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class GeniusApiSongConverterTests {
 
     @Test
-    @DisplayName("")
+    @DisplayName("convert successfully a correct JSON to a song")
     void convertSuccessfullyAJsonToASong() throws JsonProcessingException {
         var jsonResponse = "{\n" +
                 "    \"meta\": {\n" +
@@ -87,6 +88,15 @@ class GeniusApiSongConverterTests {
         assertThat(expected.getArtistNames()).isEqualTo(actual.getFirst().getArtistNames());
         assertThat(expected.getImageUrl()).isEqualTo(actual.getFirst().getImageUrl());
 
+    }
+
+    @Test
+    @DisplayName("throws an exception when converting an incorrect JSON")
+    void throwsExceptionWhenConvertingAnIncorrectJson(){
+        var jsonResponse = "badJson";
+        assertThatThrownBy(() -> GeniusApiSongConverter.parseResponse(jsonResponse))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Error parsing JSON response");
     }
 
 }
