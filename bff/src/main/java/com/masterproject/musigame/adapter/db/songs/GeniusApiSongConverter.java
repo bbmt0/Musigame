@@ -5,11 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonParseException;
 import com.masterproject.musigame.songs.Song;
 import com.masterproject.musigame.songs.SongId;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GeniusApiSongConverter {
 
     public static List<Song> parseResponse(String jsonResponse) {
