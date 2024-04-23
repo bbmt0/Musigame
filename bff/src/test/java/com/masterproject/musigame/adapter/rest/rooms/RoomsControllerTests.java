@@ -1,7 +1,10 @@
 package com.masterproject.musigame.adapter.rest.rooms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.masterproject.musigame.rooms.*;
+import com.masterproject.musigame.rooms.Creator;
+import com.masterproject.musigame.rooms.Room;
+import com.masterproject.musigame.rooms.RoomId;
+import com.masterproject.musigame.rooms.RoomsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -12,11 +15,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Collections;
 import java.util.Optional;
 
-import static com.masterproject.musigame.rooms.RoomMother.*;
-import static com.masterproject.musigame.rooms.RoomMother.Rooms.*;
+import static com.masterproject.musigame.rooms.RoomMother.Rooms.ids;
+import static com.masterproject.musigame.rooms.RoomMother.generateCreator;
+import static com.masterproject.musigame.rooms.RoomMother.roomBuilder;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

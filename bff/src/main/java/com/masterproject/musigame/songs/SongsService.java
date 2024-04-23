@@ -1,6 +1,5 @@
 package com.masterproject.musigame.songs;
 
-import com.masterproject.musigame.rooms.RoomId;
 import jakarta.annotation.Nonnull;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

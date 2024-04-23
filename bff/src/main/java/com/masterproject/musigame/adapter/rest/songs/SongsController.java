@@ -1,6 +1,5 @@
 package com.masterproject.musigame.adapter.rest.songs;
 
-import com.masterproject.musigame.rooms.RoomId;
 import com.masterproject.musigame.songs.SongsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
