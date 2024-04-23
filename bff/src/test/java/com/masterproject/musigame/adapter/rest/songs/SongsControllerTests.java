@@ -1,7 +1,5 @@
 package com.masterproject.musigame.adapter.rest.songs;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.masterproject.musigame.songs.Song;
 import com.masterproject.musigame.songs.SongsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -16,8 +14,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Collections;
 import java.util.Optional;
 
-import static com.masterproject.musigame.songs.SongMother.Songs.ids;
-import static com.masterproject.musigame.songs.SongMother.*;
+import static com.masterproject.musigame.songs.SongMother.generateTitle;
+import static com.masterproject.musigame.songs.SongMother.songBuilder;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
