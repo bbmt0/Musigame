@@ -21,7 +21,7 @@ public class ImagesController {
     private final ImagesService service;
 
     @GetMapping("/{imageId}")
-    public ResponseEntity<Object> getRoomById(@PathVariable String imageId) {
+    public ResponseEntity<Object> getImageById(@PathVariable String imageId) {
         var image = service.findById(ImageId.of(imageId));
         if (image.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(image);

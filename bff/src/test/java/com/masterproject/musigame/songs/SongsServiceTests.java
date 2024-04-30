@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SongsServiceTests {
     private SongsService service;
     private InMemorySongsRepository repository;
-    private String KNOWN_TITLE = generateTitle().sample();
+    private final String KNOWN_TITLE = generateTitle().sample();
 
     @BeforeEach
     void setUp() {
