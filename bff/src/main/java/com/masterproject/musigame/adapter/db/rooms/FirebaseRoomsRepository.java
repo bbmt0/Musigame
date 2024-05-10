@@ -38,6 +38,44 @@ public class FirebaseRoomsRepository implements RoomsRepository {
 
     @Nonnull
     @Override
+    public Optional<Room> startGame(@NonNull Room room) {
+        try {
+            DocumentReference docRef = firebaseService.getDb().collection("rooms").document(room.getRoomId().getValue());
+            DocumentSnapshot documentSnapshot = docRef.get().get();
+
+            if (documentSnapshot.exists()) {
+                Map<String, Object> data = documentSnapshot.getData();
+                if (data != null) {
+                    Game game = extractGame(data);
+                    Creator creator = extractCreator(data);
+                    List<Player> players = extractPlayers(data);
+
+                    Room updatedRoom = Room.builder()
+                            .roomId(room.getRoomId())
+                            .game(game)
+                            .creator(creator)
+                            .players(players)
+                            .build();
+                    updatedRoom.getGame().setGameLaunched(true);
+
+                    Map<String, Object> roomData = new HashMap<>();
+                    roomData.put("id", updatedRoom.getRoomId().getValue());
+                    roomData.put("game", updatedRoom.getGame());
+                    roomData.put("creator", updatedRoom.getCreator());
+                    roomData.put("players", updatedRoom.getPlayers());
+                    docRef.set(roomData);
+
+                    return Optional.of(updatedRoom);
+                }
+            }
+        } catch (Exception e) {
+            Thread.currentThread().interrupt();
+        }
+        return Optional.empty();
+    }
+
+    @Nonnull
+    @Override
     public Optional<Room> findById(@NonNull RoomId roomId) {
         DocumentReference docRef = firebaseService.getDb().collection("rooms").document(roomId.getValue());
         try {
