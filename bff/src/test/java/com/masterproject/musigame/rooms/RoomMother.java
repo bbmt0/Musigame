@@ -13,7 +13,7 @@ public class RoomMother {
     public static Player generatePlayer() {
         Arbitrary<String> usernameArbitrary = Arbitraries.strings().alpha().ofMinLength(5).ofMaxLength(15);
         Arbitrary<String> profilePictureUrlArbitrary = Arbitraries.strings().alpha().ofMinLength(10).ofMaxLength(50);
-        Arbitrary<PlayerId> playerIdArbitrary = Arbitraries.create(RoomMother::generatePlayerId);
+        Arbitrary<String> playerIdArbitrary = Arbitraries.create(RoomMother::generatePlayerId);
 
         return Player.builder()
                 .playerId(playerIdArbitrary.sample())
@@ -25,18 +25,18 @@ public class RoomMother {
     public static Creator generateCreator() {
         Arbitrary<String> usernameArbitrary = Arbitraries.strings().alpha().ofMinLength(5).ofMaxLength(15);
         Arbitrary<String> profilePictureUrlArbitrary = Arbitraries.strings().alpha().ofMinLength(10).ofMaxLength(50);
-        Arbitrary<PlayerId> playerIdArbitrary = Arbitraries.create(RoomMother::generatePlayerId);
+        Arbitrary<String> playerIdArbitrary = Arbitraries.create(RoomMother::generatePlayerId);
 
         Player player = Player.builder()
                 .playerId(playerIdArbitrary.sample())
                 .username(usernameArbitrary.sample())
                 .profilePictureUrl(profilePictureUrlArbitrary.sample())
                 .build();
-        return new Creator(player.getUsername(), player.getProfilePictureUrl());
+        return new Creator(player.getPlayerId(), player.getUsername(), player.getProfilePictureUrl());
     }
 
-    public static PlayerId generatePlayerId() {
-        return PlayerId.of(Arbitraries.strings().alpha().ofMinLength(5).sample());
+    public static String generatePlayerId() {
+        return Arbitraries.strings().alpha().ofMinLength(5).ofMaxLength(5).sample();
     }
 
     public static Rooms.Builder roomBuilder() {

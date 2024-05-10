@@ -83,19 +83,22 @@ public class FirebaseRoomsRepository implements RoomsRepository {
     private Creator extractCreator(Map<String, Object> data) {
         Map<String, Object> creatorData = (Map<String, Object>) data.get("creator");
         Player player = Player.builder()
+                .playerId((String) creatorData.get("playerId"))
                 .profilePictureUrl((String) creatorData.get("profilePictureUrl"))
                 .username((String) creatorData.get("username"))
                 .build();
-        return new Creator(player.getUsername(), player.getProfilePictureUrl());
+        return new Creator(player.getPlayerId(), player.getUsername(), player.getProfilePictureUrl());
     }
 
     private List<Player> extractPlayers(Map<String, Object> data) {
         List<Map<String, String>> playersData = (List<Map<String, String>>) data.get("players");
         List<Player> players = new ArrayList<>();
         for (Map<String, String> playerData : playersData) {
+            String playerId = playerData.get("playerId.value");
             String profilePictureUrl = playerData.get("profilePictureUrl");
             String username = playerData.get("username");
             Player player = Player.builder()
+                    .playerId(playerId)
                     .profilePictureUrl(profilePictureUrl)
                     .username(username)
                     .build();
