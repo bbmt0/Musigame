@@ -25,4 +25,20 @@ class InMemoryRoomsRepository implements RoomsRepository {
         rooms.put(room.getRoomId(), room);
         return room;
     }
+
+    @Nonnull
+    @Override
+    public Optional<Room> startGame(@NonNull Room room) {
+        Room updatedRoom = Room.builder()
+                .roomId(room.getRoomId())
+                .game(Game.builder()
+                        .gameType(room.getGame().getGameType())
+                        .isGameLaunched(true)
+                        .build())
+                .creator(room.getCreator())
+                .players(room.getPlayers())
+                .build();
+        rooms.put(room.getRoomId(), updatedRoom);
+        return Optional.of(updatedRoom);
+    }
 }

@@ -34,4 +34,14 @@ public class RoomsService {
         return repository.save(room);
     }
 
+    @Nonnull
+    public Optional<Room> startGame(@NonNull Room room, @NonNull Creator creator) {
+        if (room.getCreator().equals(creator)) {
+            room.getGame().setGameLaunched(true);
+            return Optional.of(repository.save(room));
+        } else {
+            return Optional.empty();
+        }
+    }
+
 }
