@@ -9,6 +9,7 @@ import lombok.*;
 @EqualsAndHashCode
 @ToString
 public class Player {
+    private String playerId;
     private String username;
     private String profilePictureUrl;
 }

@@ -43,6 +43,7 @@ class RoomsControllerTests {
     void createRoomWithCurrentUserAsCreator() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+
         when(service.save(creator)).thenReturn(mockRoom);
 
         mvc.perform(MockMvcRequestBuilders.post("/api/v1/rooms")
