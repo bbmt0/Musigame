@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +23,7 @@ public class RoomsService {
     @Nonnull
     public Room save(@NonNull Creator creator) {
         var roomId = RoomId.generateId();
+
         Room room = Room.builder()
                 .roomId(roomId)
                 .creator(creator)
@@ -30,7 +32,7 @@ public class RoomsService {
                         .isGameLaunched(false)
                         .build())
                 .players(new ArrayList<>(Collections.singletonList(creator)))
-                .rounds(new ArrayList<>(Collections.nCopies(3, Round.builder().build())))
+                .rounds(generateRounds(creator))
                 .build();
         room.getRounds().getFirst().setCurrentBoss(creator);
         return repository.save(room);
@@ -47,6 +49,15 @@ public class RoomsService {
     public Optional<Room> submitSentence(@NonNull Room room, @NonNull Integer roundId, @NonNull String sentence) {
         room.getRounds().get(roundId).setSentence(sentence);
         return Optional.of(repository.save(room));
+    }
+
+    private List<Round> generateRounds(Player player) {
+        List<Round> rounds = new ArrayList<>(3);
+        rounds.add(Round.builder().build());
+        rounds.add(Round.builder().build());
+        rounds.add(Round.builder().build());
+        rounds.getFirst().setCurrentBoss(player);
+        return rounds;
     }
 
 }
