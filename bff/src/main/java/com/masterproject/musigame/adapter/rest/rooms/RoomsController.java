@@ -49,8 +49,8 @@ public class RoomsController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createRoom(@RequestBody Creator creator, GameType gameType) {
-        var room = service.save(creator, gameType);
+    public ResponseEntity<Object> createRoom(@RequestBody Creator creator, @RequestParam String gameType) {
+        var room = service.save(creator, GameType.valueOf(gameType));
         return ResponseEntity.status(HttpStatus.CREATED).body(room);
     }
 }

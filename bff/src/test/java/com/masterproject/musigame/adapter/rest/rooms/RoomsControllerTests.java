@@ -50,7 +50,8 @@ class RoomsControllerTests {
 
         mvc.perform(MockMvcRequestBuilders.post("/api/v1/rooms")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(creator)))
+                        .content(objectMapper.writeValueAsString(creator))
+                        .queryParam("gameType", gameType.name()))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(objectMapper.writeValueAsString(mockRoom)));
     }
@@ -137,8 +138,6 @@ class RoomsControllerTests {
                 Arguments.of(GameType.IMPOSTER)
         );
     }
-
-
 
 
 }
