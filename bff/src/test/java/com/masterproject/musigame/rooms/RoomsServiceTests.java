@@ -11,8 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static com.masterproject.musigame.rooms.RoomMother.Rooms.ids;
-import static com.masterproject.musigame.rooms.RoomMother.generateCreator;
-import static com.masterproject.musigame.rooms.RoomMother.roomBuilder;
+import static com.masterproject.musigame.rooms.RoomMother.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("unit")
@@ -63,10 +62,35 @@ class RoomsServiceTests {
     void startGame(GameType gameType) {
         Creator creator = generateCreator();
         var room = service.save(creator);
+        room.getGame().setGameType(gameType);
 
         var actual = service.startGame(room, gameType);
-        assertThat(actual).isPresent();
+        assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
     }
+
+    @Test
+    @DisplayName("submit a sentence")
+    void submitSentence() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        room.getRounds().get(0).setSentence("sentence");
+
+
+        var actual = service.submitSentence(room, 0, "sentence");
+        assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
+    }
+
+    @Test
+    @DisplayName("join a room")
+    void joinRoom() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        Player player = generatePlayer();
+
+        var actual = service.join(room, player);
+        assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
+    }
+
 
     static Stream<Arguments> gameTypeProvider() {
         return Stream.of(
