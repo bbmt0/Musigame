@@ -59,35 +59,13 @@ class RoomsServiceTests {
 
     @ParameterizedTest
     @MethodSource("gameTypeProvider")
-    @DisplayName("start a game with known RoomId")
-    void startGameWithKnownRoomId(GameType gameType) {
+    @DisplayName("start a game ")
+    void startGame(GameType gameType) {
         Creator creator = generateCreator();
         var room = service.save(creator);
 
-        var actual = service.startGame(room, creator, gameType);
+        var actual = service.startGame(room, gameType);
         assertThat(actual).isPresent();
-    }
-
-    @ParameterizedTest
-    @MethodSource("gameTypeProvider")
-    @DisplayName("start a game with unknown RoomId")
-    void startGameWithUnknownRoomId(GameType gameType) {
-        Creator creator = generateCreator();
-        service.save(creator);
-
-        var actual = service.startGame(roomBuilder().build(), creator, gameType);
-        assertThat(actual).isEmpty();
-    }
-
-    @ParameterizedTest
-    @MethodSource("gameTypeProvider")
-    @DisplayName("start a game with unknown creator")
-    void startGameWithUnknownCreator(GameType gameType) {
-        Creator creator = generateCreator();
-        var room = service.save(creator);
-
-        var actual = service.startGame(room, generateCreator(), gameType);
-        assertThat(actual).isEmpty();
     }
 
     static Stream<Arguments> gameTypeProvider() {

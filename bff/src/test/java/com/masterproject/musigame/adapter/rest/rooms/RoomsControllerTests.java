@@ -84,7 +84,7 @@ class RoomsControllerTests {
         Room mockRoom = roomBuilder(ROOM_ID, creator, gameType).build();
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
-        when(service.startGame(mockRoom, creator, gameType)).thenReturn(Optional.of(mockRoom));
+        when(service.startGame(mockRoom, gameType)).thenReturn(Optional.of(mockRoom));
 
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
                         .param("creatorId", creator.getPlayerId())
@@ -132,7 +132,7 @@ class RoomsControllerTests {
         Room mockRoom = roomBuilder(ROOM_ID, creator).build();
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
-        when(service.startGame(mockRoom, creator, gameType)).thenReturn(Optional.empty());
+        when(service.startGame(mockRoom, gameType)).thenReturn(Optional.empty());
 
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
                         .param("creatorId", creator.getPlayerId())
@@ -140,9 +140,43 @@ class RoomsControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
+    @ParameterizedTest
+    @MethodSource("roundIdProvider")
+    @DisplayName("submit sentence with room id, current boss id, round id and sentence")
+    void submitSentenceWithRoomIdCurrentBossIdRoundIdAndSentence() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        int roundId = 0;
+        String sentence = "sentence";
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mockRoom.getRounds().get(roundId).setCurrentBoss(creator);
+        mockRoom.getRounds().get(roundId).setSentence(sentence);
+
+        when(service.submitSentence(mockRoom, roundId, sentence)).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-sentence", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("roundId", String.valueOf(roundId))
+                        .param("sentence", sentence))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
+                .andExpect(jsonPath("$.rounds[" + roundId + "].sentence").value(sentence));
+    }
+
     static Stream<Arguments> gameTypeProvider() {
         return Stream.of(
                 Arguments.of(GameType.IMPOSTER)
+        );
+    }
+
+    static Stream<Arguments> roundIdProvider() {
+        return Stream.of(
+                Arguments.of(0),
+                Arguments.of(1),
+                Arguments.of(2)
         );
     }
 

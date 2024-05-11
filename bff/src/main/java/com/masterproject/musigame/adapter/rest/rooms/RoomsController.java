@@ -40,7 +40,7 @@ public class RoomsController {
         if (!creator.getPlayerId().equals(creatorId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        var updatedRoom = service.startGame(room.get(), creator, gameType);
+        var updatedRoom = service.startGame(room.get(), gameType);
         if (updatedRoom.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
         } else {
@@ -52,5 +52,23 @@ public class RoomsController {
     public ResponseEntity<Object> createRoom(@RequestBody Creator creator) {
         var room = service.save(creator);
         return ResponseEntity.status(HttpStatus.CREATED).body(room);
+    }
+
+    @PutMapping("/{roomId}/submit-sentence")
+    public ResponseEntity<Object> submitSentence(@PathVariable String roomId, @RequestParam String currentBossId, @RequestParam Integer roundId, @RequestParam String sentence) {
+        var room = service.findById(RoomId.build(roomId));
+        if (room.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        var currentBoss = room.get().getRounds().get(roundId).getCurrentBoss();
+        if (!currentBoss.getPlayerId().equals(currentBossId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        var updatedRoom = service.submitSentence(room.get(), roundId, sentence);
+        if (updatedRoom.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }
