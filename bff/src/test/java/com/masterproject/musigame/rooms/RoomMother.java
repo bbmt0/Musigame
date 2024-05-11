@@ -50,6 +50,9 @@ public class RoomMother {
     public static Rooms.Builder roomBuilder(RoomId roomId, Creator creator) {
         return new Rooms.Builder(roomId, creator);
     }
+    public static Rooms.Builder roomBuilder(RoomId roomId, Creator creator, GameType gameType) {
+        return new Rooms.Builder(roomId, creator, gameType);
+    }
 
     public static class Rooms {
         public static Arbitrary<RoomId> ids() {
@@ -79,6 +82,12 @@ public class RoomMother {
             Builder(RoomId roomId, Creator creator) {
                 this.roomId = roomId;
                 this.creator = creator;
+            }
+
+            Builder(RoomId roomId, Creator creator, GameType gameType) {
+                this.roomId = roomId;
+                this.creator = creator;
+                this.game = Game.builder().isGameLaunched(false).gameType(gameType).build();
             }
 
             public Room build() {

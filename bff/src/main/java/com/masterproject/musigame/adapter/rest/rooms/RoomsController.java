@@ -1,6 +1,7 @@
 package com.masterproject.musigame.adapter.rest.rooms;
 
 import com.masterproject.musigame.rooms.Creator;
+import com.masterproject.musigame.rooms.GameType;
 import com.masterproject.musigame.rooms.RoomId;
 import com.masterproject.musigame.rooms.RoomsService;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +49,8 @@ public class RoomsController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createRoom(@RequestBody Creator creator) {
-        var room = service.save(creator);
+    public ResponseEntity<Object> createRoom(@RequestBody Creator creator, GameType gameType) {
+        var room = service.save(creator, gameType);
         return ResponseEntity.status(HttpStatus.CREATED).body(room);
     }
 }
