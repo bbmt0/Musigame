@@ -38,7 +38,7 @@ public class FirebaseRoomsRepository implements RoomsRepository {
 
     @Nonnull
     @Override
-    public Optional<Room> startGame(@NonNull Room room) {
+    public Optional<Room> startGame(@NonNull Room room, @NonNull GameType gameType) {
         try {
             DocumentReference docRef = firebaseService.getDb().collection("rooms").document(room.getRoomId().getValue());
             DocumentSnapshot documentSnapshot = docRef.get().get();
@@ -57,6 +57,7 @@ public class FirebaseRoomsRepository implements RoomsRepository {
                             .players(players)
                             .build();
                     updatedRoom.getGame().setGameLaunched(true);
+                    updatedRoom.getGame().setGameType(gameType);
 
                     Map<String, Object> roomData = new HashMap<>();
                     roomData.put("id", updatedRoom.getRoomId().getValue());

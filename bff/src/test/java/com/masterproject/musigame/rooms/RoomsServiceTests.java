@@ -28,33 +28,30 @@ class RoomsServiceTests {
         service = new RoomsService(repository);
     }
 
-    @ParameterizedTest
-    @MethodSource("gameTypeProvider")
+    @Test
     @DisplayName("create a room successfully")
-    void createRoom(GameType gameType) {
+    void createRoom() {
         Room room = roomBuilder().buildNoPlayers();
-        var actual = service.save(room.getCreator(), gameType);
+        var actual = service.save(room.getCreator());
 
         assertThat(actual).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
     }
 
-    @ParameterizedTest
-    @MethodSource("gameTypeProvider")
+    @Test
     @DisplayName("get a room with known RoomId")
-    void getRoomWithKnownRoomId(GameType gameType) {
+    void getRoomWithKnownRoomId() {
         Creator creator = generateCreator();
-        var expected = service.save(creator, gameType);
+        var expected = service.save(creator);
 
         var actual = service.findById(expected.getRoomId());
         assertThat(actual).contains(expected);
     }
 
-    @ParameterizedTest
-    @MethodSource("gameTypeProvider")
+    @Test
     @DisplayName("get null with unknown RoomId")
-    void getNullWithUnknownRoomId(GameType gameType) {
+    void getNullWithUnknownRoomId() {
         Creator creator = generateCreator();
-        service.save(creator, gameType);
+        service.save(creator);
 
         var actual = service.findById(ids().sample());
         assertThat(actual).isEmpty();
@@ -65,9 +62,9 @@ class RoomsServiceTests {
     @DisplayName("start a game with known RoomId")
     void startGameWithKnownRoomId(GameType gameType) {
         Creator creator = generateCreator();
-        var room = service.save(creator, gameType);
+        var room = service.save(creator);
 
-        var actual = service.startGame(room, creator);
+        var actual = service.startGame(room, creator, gameType);
         assertThat(actual).isPresent();
     }
 
@@ -76,9 +73,9 @@ class RoomsServiceTests {
     @DisplayName("start a game with unknown RoomId")
     void startGameWithUnknownRoomId(GameType gameType) {
         Creator creator = generateCreator();
-        service.save(creator, gameType);
+        service.save(creator);
 
-        var actual = service.startGame(roomBuilder().build(), creator);
+        var actual = service.startGame(roomBuilder().build(), creator, gameType);
         assertThat(actual).isEmpty();
     }
 
@@ -87,9 +84,9 @@ class RoomsServiceTests {
     @DisplayName("start a game with unknown creator")
     void startGameWithUnknownCreator(GameType gameType) {
         Creator creator = generateCreator();
-        var room = service.save(creator, gameType);
+        var room = service.save(creator);
 
-        var actual = service.startGame(room, generateCreator());
+        var actual = service.startGame(room, generateCreator(), gameType);
         assertThat(actual).isEmpty();
     }
 

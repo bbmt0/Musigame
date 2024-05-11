@@ -31,7 +31,7 @@ public class RoomsController {
     }
 
     @PutMapping("/{roomId}/start")
-    public ResponseEntity<Object> startRoom(@PathVariable String roomId, @RequestParam String creatorId) {
+    public ResponseEntity<Object> startRoom(@PathVariable String roomId, @RequestParam String creatorId, @RequestParam GameType gameType) {
         var room = service.findById(RoomId.build(roomId));
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -40,7 +40,7 @@ public class RoomsController {
         if (!creator.getPlayerId().equals(creatorId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        var updatedRoom = service.startGame(room.get(), creator);
+        var updatedRoom = service.startGame(room.get(), creator, gameType);
         if (updatedRoom.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
         } else {
@@ -49,8 +49,8 @@ public class RoomsController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createRoom(@RequestBody Creator creator, @RequestParam String gameType) {
-        var room = service.save(creator, GameType.valueOf(gameType));
+    public ResponseEntity<Object> createRoom(@RequestBody Creator creator) {
+        var room = service.save(creator);
         return ResponseEntity.status(HttpStatus.CREATED).body(room);
     }
 }
