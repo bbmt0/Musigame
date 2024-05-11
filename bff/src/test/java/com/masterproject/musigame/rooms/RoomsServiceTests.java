@@ -63,10 +63,24 @@ class RoomsServiceTests {
     void startGame(GameType gameType) {
         Creator creator = generateCreator();
         var room = service.save(creator);
+        room.getGame().setGameType(gameType);
 
         var actual = service.startGame(room, gameType);
-        assertThat(actual).isPresent();
+        assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
     }
+
+    @Test
+    @DisplayName("submit a sentence")
+    void submitSentence() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        room.getRounds().get(0).setSentence("sentence");
+
+
+        var actual = service.submitSentence(room, 0, "sentence");
+        assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
+    }
+
 
     static Stream<Arguments> gameTypeProvider() {
         return Stream.of(

@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -121,7 +123,8 @@ class RoomsControllerTests {
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
                         .param("creatorId", "wrongCreatorId")
                         .param("gameType", gameType.name()))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Player is not the creator"));
     }
 
     @ParameterizedTest
@@ -164,6 +167,95 @@ class RoomsControllerTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
                 .andExpect(jsonPath("$.rounds[" + roundId + "].sentence").value(sentence));
+    }
+
+    @Test
+    @DisplayName("join player to room with room id")
+    void joinPlayerToRoomWithRoomId() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        var updatedRoom = Room.builder()
+                .game(mockRoom.getGame())
+                .creator(mockRoom.getCreator())
+                .roomId(mockRoom.getRoomId())
+                .players(mockRoom.getPlayers())
+                .rounds(mockRoom.getRounds())
+                .build();
+        var players = new ArrayList<>(updatedRoom.getPlayers());
+        players.add(player);
+        updatedRoom.setPlayers(players);
+
+        when(service.join(mockRoom, player)).thenReturn(Optional.of(updatedRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/join", ROOM_ID.getValue())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(player)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
+                .andExpect(jsonPath("$.players[1].playerId").value(player.getPlayerId()));
+    }
+
+    @Test
+    @DisplayName("join player to room with unknown room id")
+    void joinPlayerToRoomWithUnknownRoomId() throws Exception {
+        Player player = RoomMother.generatePlayer();
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/join", ROOM_ID.getValue())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(player)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("join player when player is already in room")
+    void joinPlayerWhenPlayerIsAlreadyInRoom() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/join", ROOM_ID.getValue())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(player)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Player already in room"));
+    }
+
+    @Test
+    @DisplayName("join player when room is full")
+    void joinPlayerWhenRoomIsFull() throws Exception {
+        Room mockRoom = generateARoomFullOfPlayers();
+        Player player = RoomMother.generatePlayer();
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/join", ROOM_ID.getValue())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(player)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Room is full"));
+    }
+
+    static Room generateARoomFullOfPlayers() {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        List<Player> players = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            players.add(RoomMother.generatePlayer());
+        }
+        mockRoom.setPlayers(players);
+        return mockRoom;
     }
 
     static Stream<Arguments> gameTypeProvider() {

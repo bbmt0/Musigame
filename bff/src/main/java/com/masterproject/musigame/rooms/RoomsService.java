@@ -51,6 +51,12 @@ public class RoomsService {
         return Optional.of(repository.save(room));
     }
 
+    @Nonnull
+    public Optional<Room> join(@NonNull Room room, @NonNull Player player) {
+        room.getPlayers().add(player);
+        return Optional.of(repository.save(room));
+    }
+
     private List<Round> generateRounds(Player player) {
         List<Round> rounds = new ArrayList<>(3);
         rounds.add(Round.builder().build());
