@@ -15,4 +15,5 @@ public class Room {
     private Game game;
     private Creator creator;
     private List<Player> players;
+    private List<Round> rounds;
 }

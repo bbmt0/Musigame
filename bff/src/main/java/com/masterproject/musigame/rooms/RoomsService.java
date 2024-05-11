@@ -30,19 +30,23 @@ public class RoomsService {
                         .isGameLaunched(false)
                         .build())
                 .players(new ArrayList<>(Collections.singletonList(creator)))
+                .rounds(new ArrayList<>(Collections.nCopies(3, Round.builder().build())))
                 .build();
+        room.getRounds().getFirst().setCurrentBoss(creator);
         return repository.save(room);
     }
 
     @Nonnull
-    public Optional<Room> startGame(@NonNull Room room, @NonNull Creator creator, GameType gameType) {
-        if (room.getCreator().equals(creator)) {
-            room.getGame().setGameLaunched(true);
-            room.getGame().setGameType(gameType);
-            return Optional.of(repository.save(room));
-        } else {
-            return Optional.empty();
-        }
+    public Optional<Room> startGame(@NonNull Room room, GameType gameType) {
+        room.getGame().setGameLaunched(true);
+        room.getGame().setGameType(gameType);
+        return Optional.of(repository.save(room));
+    }
+
+    @Nonnull
+    public Optional<Room> submitSentence(@NonNull Room room, @NonNull Integer roundId, @NonNull String sentence) {
+        room.getRounds().get(roundId).setSentence(sentence);
+        return Optional.of(repository.save(room));
     }
 
 }
