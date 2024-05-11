@@ -67,7 +67,7 @@ public class RoomMother {
         @Accessors(fluent = true)
         public static class Builder {
             private RoomId roomId;
-            private Game game = Game.builder().isGameLaunched(false).gameType(GameType.IMPOSTER).build();
+            private Game game = Game.builder().isGameLaunched(false).gameType(null).build();
             private Creator creator = generateCreator();
             private List<Player> players = generatePlayersList();
 

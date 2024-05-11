@@ -28,11 +28,11 @@ class InMemoryRoomsRepository implements RoomsRepository {
 
     @Nonnull
     @Override
-    public Optional<Room> startGame(@NonNull Room room) {
+    public Optional<Room> startGame(@NonNull Room room, @NonNull GameType gameType) {
         Room updatedRoom = Room.builder()
                 .roomId(room.getRoomId())
                 .game(Game.builder()
-                        .gameType(room.getGame().getGameType())
+                        .gameType(gameType)
                         .isGameLaunched(true)
                         .build())
                 .creator(room.getCreator())

@@ -20,13 +20,13 @@ public class RoomsService {
     }
 
     @Nonnull
-    public Room save(@NonNull Creator creator, GameType gameType) {
+    public Room save(@NonNull Creator creator) {
         var roomId = RoomId.generateId();
         Room room = Room.builder()
                 .roomId(roomId)
                 .creator(creator)
                 .game(Game.builder()
-                        .gameType(gameType)
+                        .gameType(null)
                         .isGameLaunched(false)
                         .build())
                 .players(new ArrayList<>(Collections.singletonList(creator)))
@@ -35,9 +35,10 @@ public class RoomsService {
     }
 
     @Nonnull
-    public Optional<Room> startGame(@NonNull Room room, @NonNull Creator creator) {
+    public Optional<Room> startGame(@NonNull Room room, @NonNull Creator creator, GameType gameType) {
         if (room.getCreator().equals(creator)) {
             room.getGame().setGameLaunched(true);
+            room.getGame().setGameType(gameType);
             return Optional.of(repository.save(room));
         } else {
             return Optional.empty();

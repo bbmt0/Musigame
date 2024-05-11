@@ -13,5 +13,5 @@ public interface RoomsRepository {
     Room save(@NonNull Room room);
 
     @Nonnull
-    Optional<Room> startGame(@NonNull Room room);
+    Optional<Room> startGame(@NonNull Room room, @NonNull GameType gameType);
 }

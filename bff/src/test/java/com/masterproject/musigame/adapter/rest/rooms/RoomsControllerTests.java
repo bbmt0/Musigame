@@ -39,19 +39,17 @@ class RoomsControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @ParameterizedTest
-    @MethodSource("gameTypeProvider")
+    @Test
     @DisplayName("create room with current user as creator")
-    void createRoomWithCurrentUserAsCreator(GameType gameType) throws Exception {
+    void createRoomWithCurrentUserAsCreator() throws Exception {
         Creator creator = generateCreator();
-        Room mockRoom = roomBuilder(ROOM_ID, creator, gameType).build();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
 
-        when(service.save(creator, gameType)).thenReturn(mockRoom);
+        when(service.save(creator)).thenReturn(mockRoom);
 
         mvc.perform(MockMvcRequestBuilders.post("/api/v1/rooms")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(creator))
-                        .queryParam("gameType", gameType.name()))
+                        .content(objectMapper.writeValueAsString(creator)))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(objectMapper.writeValueAsString(mockRoom)));
     }
@@ -78,58 +76,67 @@ class RoomsControllerTests {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("gameTypeProvider")
     @DisplayName("start room with room id and creator id")
-    void startRoomWithRoomIdAndCreatorId() throws Exception {
+    void startRoomWithRoomIdAndCreatorId(GameType gameType) throws Exception {
         Creator creator = generateCreator();
-        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        Room mockRoom = roomBuilder(ROOM_ID, creator, gameType).build();
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
-        when(service.startGame(mockRoom, creator)).thenReturn(Optional.of(mockRoom));
+        when(service.startGame(mockRoom, creator, gameType)).thenReturn(Optional.of(mockRoom));
 
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
-                        .param("creatorId", creator.getPlayerId()))
+                        .param("creatorId", creator.getPlayerId())
+                        .param("gameType", gameType.name()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()));
+                .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
+                .andExpect(jsonPath("$.game.gameType").value(gameType.name()));
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("gameTypeProvider")
     @DisplayName("get not found with wrong room id when starting room")
-    void getNotFoundWithWrongRoomIdWhenStartingRoom() throws Exception {
+    void getNotFoundWithWrongRoomIdWhenStartingRoom(GameType gameType) throws Exception {
         Creator creator = generateCreator();
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.empty());
 
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
-                        .param("creatorId", creator.getPlayerId()))
+                        .param("creatorId", creator.getPlayerId())
+                        .param("gameType", gameType.name()))
                 .andExpect(status().isNotFound());
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("gameTypeProvider")
     @DisplayName("get forbidden with wrong creator id when starting room")
-    void getForbiddenWithWrongCreatorIdWhenStartingRoom() throws Exception {
+    void getForbiddenWithWrongCreatorIdWhenStartingRoom(GameType gameType) throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).build();
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
 
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
-                        .param("creatorId", "wrongCreatorId"))
+                        .param("creatorId", "wrongCreatorId")
+                        .param("gameType", gameType.name()))
                 .andExpect(status().isForbidden());
     }
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("gameTypeProvider")
     @DisplayName("get bad request when starting room")
-    void getBadRequestWhenStartingRoom() throws Exception {
+    void getBadRequestWhenStartingRoom(GameType gameType) throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).build();
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
-        when(service.startGame(mockRoom, creator)).thenReturn(Optional.empty());
+        when(service.startGame(mockRoom, creator, gameType)).thenReturn(Optional.empty());
 
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
-                        .param("creatorId", creator.getPlayerId()))
+                        .param("creatorId", creator.getPlayerId())
+                        .param("gameType", gameType.name()))
                 .andExpect(status().isBadRequest());
     }
 
