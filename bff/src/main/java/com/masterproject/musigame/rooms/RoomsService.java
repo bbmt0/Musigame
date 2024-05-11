@@ -20,13 +20,13 @@ public class RoomsService {
     }
 
     @Nonnull
-    public Room save(@NonNull Creator creator) {
+    public Room save(@NonNull Creator creator, GameType gameType) {
         var roomId = RoomId.generateId();
         Room room = Room.builder()
                 .roomId(roomId)
                 .creator(creator)
                 .game(Game.builder()
-                        .gameType(GameType.valueOf("IMPOSTER"))
+                        .gameType(gameType)
                         .isGameLaunched(false)
                         .build())
                 .players(new ArrayList<>(Collections.singletonList(creator)))

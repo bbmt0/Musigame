@@ -1,13 +1,13 @@
 package com.masterproject.musigame.adapter.rest.rooms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.masterproject.musigame.rooms.Creator;
-import com.masterproject.musigame.rooms.Room;
-import com.masterproject.musigame.rooms.RoomId;
-import com.masterproject.musigame.rooms.RoomsService;
+import com.masterproject.musigame.rooms.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.masterproject.musigame.rooms.RoomMother.Rooms.ids;
 import static com.masterproject.musigame.rooms.RoomMother.generateCreator;
@@ -38,17 +39,19 @@ class RoomsControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Test
+    @ParameterizedTest
+    @MethodSource("gameTypeProvider")
     @DisplayName("create room with current user as creator")
-    void createRoomWithCurrentUserAsCreator() throws Exception {
+    void createRoomWithCurrentUserAsCreator(GameType gameType) throws Exception {
         Creator creator = generateCreator();
-        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        Room mockRoom = roomBuilder(ROOM_ID, creator, gameType).build();
 
-        when(service.save(creator)).thenReturn(mockRoom);
+        when(service.save(creator, gameType)).thenReturn(mockRoom);
 
         mvc.perform(MockMvcRequestBuilders.post("/api/v1/rooms")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(creator)))
+                        .content(objectMapper.writeValueAsString(creator))
+                        .queryParam("gameType", gameType.name()))
                 .andExpect(status().isCreated())
                 .andExpect(content().json(objectMapper.writeValueAsString(mockRoom)));
     }
@@ -130,7 +133,11 @@ class RoomsControllerTests {
                 .andExpect(status().isBadRequest());
     }
 
-
+    static Stream<Arguments> gameTypeProvider() {
+        return Stream.of(
+                Arguments.of(GameType.IMPOSTER)
+        );
+    }
 
 
 }
