@@ -1,8 +1,9 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'org.springframework.boot' version '3.2.2'
     id 'io.spring.dependency-management' version '1.1.4'
-    id 'org.sonarqube' version '4.4.1.3373'
+    id "org.sonarqube" version "4.4.1.3373"
     id 'io.freefair.lombok' version '8.6'
 }
 
@@ -40,23 +41,41 @@ repositories {
     mavenCentral()
 }
 
-ext{
+ext {
     firebaseVersion = '9.2.0'
+    apacheCommonsVersion = '3.14.0'
     lombokVersion = '1.18.30'
+    jqwikVersion = '1.8.4'
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.springframework:spring-webflux"
     implementation "com.google.firebase:firebase-admin:${firebaseVersion}"
+    implementation "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
+
 
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation "net.jqwik:jqwik:${jqwikVersion}"
 
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+
+jacocoTestReport {
+    getExecutionData().setFrom(fileTree(layout.buildDirectory.asFile.get()).include("/jacoco/*.exec"))
+    reports {
+        xml.required = true
+        xml.outputLocation = layout.buildDirectory.file("jacoco.xml")
+
+        html.required = true
+        html.outputLocation = layout.buildDirectory.dir("reports/jacoco")
+    }
 }
 
 sonar {

@@ -2,6 +2,7 @@ import React from 'react';
 import colors from '../assets/styles/colors'
 
 const PlayerCard = ({ avatar, username, isGreyedOut, score }) => {
+
     const trimmedUsername = username.length > 12 ? username.substring(0, 12) + '.' : username;
     const styles = {
         avatar: {

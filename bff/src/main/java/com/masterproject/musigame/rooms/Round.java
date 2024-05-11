@@ -6,7 +6,8 @@ import lombok.*;
 @Setter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class Game {
-    private boolean isGameLaunched;
-    private GameType gameType;
+public class Round {
+    private Integer roundNumber;
+    private String sentence;
+    private Player currentBoss;
 }
