@@ -6,10 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -21,6 +18,7 @@ public class ImagesController {
     private final ImagesService service;
 
     @GetMapping("/{imageId}")
+    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getImageById(@PathVariable String imageId) {
         var image = service.findById(ImageId.of(imageId));
         if (image.isPresent()) {
@@ -28,5 +26,11 @@ public class ImagesController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+
+    @GetMapping
+    @CrossOrigin(origins = "http://localhost:3000")
+    public ResponseEntity<Object> getAllImages() {
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
     }
 }

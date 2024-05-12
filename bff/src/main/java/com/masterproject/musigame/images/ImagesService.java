@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,6 +16,11 @@ public class ImagesService {
     @Nonnull
     public Optional<Image> findById(@NonNull ImageId imageId) {
         return repository.findById(imageId);
+    }
+
+    @Nonnull
+    public Optional<List<Image>> findAll() {
+        return repository.findAll();
     }
 
 }

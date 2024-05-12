@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,5 +25,11 @@ class InMemoryImagesRepository implements ImagesRepository {
     @Override
     public Optional<Image> findById(@NonNull ImageId imageId) {
         return Optional.ofNullable(images.get(imageId));
+    }
+
+    @Nonnull
+    @Override
+    public Optional<List<Image>> findAll() {
+        return Optional.of(List.copyOf(images.values()));
     }
 }

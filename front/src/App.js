@@ -1,15 +1,6 @@
-import logo from './logo.svg';
 import React, { useState } from 'react';
 import './App.css';
-import HomeScreen from './pages/homescreen/HomeScreen';
 import { WelcomeScreen } from './pages/welcomescreen/WelcomeScreen';
-import GameCreationScreen from './pages/gamecreationscreen/GameCreationScreen'
-import ShareLinkScreen from './pages/sharelinkscreen/ShareLinkScreen';
-import JoinGameScreen from './pages/joingamescreen/JoinGameScreen';
-import BossSituationScreen from './pages/gamescreens/bossscreens/BossSituationScreen';
-import PlayerScreen from './pages/gamescreens/playerscreens/PlayerScreen';
-import EndRoundScreen from './pages/gamescreens/endscreens/EndRoundScreen';
-import EndGameScreen from './pages/gamescreens/endscreens/EndGameScreen';
 
 function App() {
   const [player, setPlayer] = useState({
@@ -31,9 +22,7 @@ function App() {
   }
 
   return (
-    // <BossSituationScreen roundNumber={roundNumber} player={player}/>
-   // <EndRoundScreen roundNumber={roundNumber} player={player} winner={player} situation={situation} isPlayerWinner={isPlayerWinner} musicChoice={musicChoice} />
-  <EndGameScreen players={playersList}/>
+    <WelcomeScreen />
   );
 }
 
