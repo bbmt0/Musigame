@@ -36,6 +36,18 @@ public class RoomMother {
         return new Creator(player.getPlayerId(), player.getUsername(), player.getProfilePictureUrl());
     }
 
+    public static List<Round> generateRounds(Creator creator) {
+        List<Round> rounds = new ArrayList<>(3);
+        rounds.add(Round.builder().build());
+        rounds.add(Round.builder().build());
+        rounds.add(Round.builder().build());
+        rounds.getFirst().setCurrentBoss(creator);
+        rounds.getFirst().setRoundNumber(1);
+        rounds.get(1).setRoundNumber(2);
+        rounds.getLast().setRoundNumber(3);
+        return rounds;
+    }
+
     public static String generatePlayerId() {
         return Arbitraries.strings().alpha().ofMinLength(5).ofMaxLength(5).sample();
     }
@@ -72,7 +84,7 @@ public class RoomMother {
             private Game game = Game.builder().isGameLaunched(false).gameType(null).build();
             private Creator creator = generateCreator();
             private List<Player> players = generatePlayersList();
-            private List<Round> rounds = generateRounds();
+            private List<Round> rounds;
 
 
             Builder() {
@@ -95,10 +107,12 @@ public class RoomMother {
             }
 
             public Room build() {
+                this.rounds = generateRounds(creator);
                 return Room.builder().roomId(roomId).game(game).creator(creator).players(players).rounds(rounds).build();
             }
 
             public Room buildNoPlayers() {
+                this.rounds = generateRounds(creator);
                 return Room.builder().roomId(roomId).game(game).creator(creator).players(Collections.singletonList(creator)).rounds(rounds).build();
             }
 
@@ -108,14 +122,6 @@ public class RoomMother {
                 return allPlayers;
             }
 
-            private List<Round> generateRounds() {
-                List<Round> rounds = new ArrayList<>(3);
-                rounds.add(Round.builder().build());
-                rounds.add(Round.builder().build());
-                rounds.add(Round.builder().build());
-                rounds.getFirst().setCurrentBoss(creator);
-                return rounds;
-            }
 
         }
 

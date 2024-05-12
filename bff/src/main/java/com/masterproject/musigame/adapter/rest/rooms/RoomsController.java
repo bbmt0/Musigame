@@ -1,11 +1,14 @@
 package com.masterproject.musigame.adapter.rest.rooms;
 
 import com.masterproject.musigame.rooms.*;
+import com.masterproject.musigame.songs.Song;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -18,6 +21,7 @@ public class RoomsController {
     private static final String ROOM_NOT_FOUND = "Room not found";
     private static final String NOT_CREATOR = "Player is not the creator";
     private static final String NOT_CURRENT_BOSS = "Player is not the current boss";
+    private static final String CURRENT_BOSS = "Player is the current boss";
     private static final String GAME_ALREADY_STARTED = "Game already started";
     private static final String PLAYER_ALREADY_IN_ROOM = "Player already in room";
     private static final String ROOM_FULL = "Room is full";
@@ -25,7 +29,7 @@ public class RoomsController {
 
     @GetMapping("/{roomId}")
     public ResponseEntity<Object> getRoomById(@PathVariable String roomId) {
-        var room = service.findById(RoomId.build(roomId));
+        var room = retrieveRoom(roomId);
         if (room.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(room);
         } else {
@@ -35,7 +39,7 @@ public class RoomsController {
 
     @PutMapping("/{roomId}/start")
     public ResponseEntity<Object> startRoom(@PathVariable String roomId, @RequestParam String creatorId, @RequestParam GameType gameType) {
-        var room = service.findById(RoomId.build(roomId));
+        var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
         }
@@ -59,11 +63,11 @@ public class RoomsController {
 
     @PutMapping("/{roomId}/submit-sentence")
     public ResponseEntity<Object> submitSentence(@PathVariable String roomId, @RequestParam String currentBossId, @RequestParam Integer roundId, @RequestParam String sentence) {
-        var room = service.findById(RoomId.build(roomId));
+        var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
         }
-        var currentBoss = room.get().getRounds().get(roundId).getCurrentBoss();
+        var currentBoss = room.get().getRounds().get(roundId - 1).getCurrentBoss();
         if (!currentBoss.getPlayerId().equals(currentBossId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(NOT_CURRENT_BOSS);
         }
@@ -75,9 +79,27 @@ public class RoomsController {
         }
     }
 
+    @PutMapping("/{roomId}/submit-song")
+    public ResponseEntity<Object> submitSong(@PathVariable String roomId, @RequestParam String playerId, @RequestParam Integer roundId, @RequestBody Song song) {
+        var room = retrieveRoom(roomId);
+        if (room.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
+        }
+        var currentBoss = room.get().getRounds().get(roundId - 1).getCurrentBoss();
+        if (currentBoss.getPlayerId().equals(playerId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(CURRENT_BOSS);
+        }
+        var updatedRoom = service.submitSong(room.get(), roundId, playerId, song);
+        if (updatedRoom.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
     @PutMapping("/{roomId}/join")
     public ResponseEntity<Object> joinRoom(@PathVariable String roomId, @RequestBody Player player) {
-        var room = service.findById(RoomId.build(roomId));
+        var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
 
@@ -97,5 +119,9 @@ public class RoomsController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+    }
+
+    private Optional<Room> retrieveRoom(String roomId) {
+        return service.findById(RoomId.build(roomId));
     }
 }

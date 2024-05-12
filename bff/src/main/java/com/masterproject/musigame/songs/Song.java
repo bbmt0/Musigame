@@ -13,4 +13,8 @@ public class Song {
     String artistNames;
     String title;
     String imageUrl;
+
+    public String toJson() {
+        return "{\"songId\":\"" + songId.getValue() + "\",\"artistNames\":\"" + artistNames + "\",\"title\":\"" + title + "\",\"imageUrl\":\"" + imageUrl + "\"}";
+    }
 }

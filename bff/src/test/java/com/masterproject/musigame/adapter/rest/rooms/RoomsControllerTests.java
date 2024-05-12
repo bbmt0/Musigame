@@ -2,6 +2,8 @@ package com.masterproject.musigame.adapter.rest.rooms;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.masterproject.musigame.rooms.*;
+import com.masterproject.musigame.songs.Song;
+import com.masterproject.musigame.songs.SongMother;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,14 +17,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static com.masterproject.musigame.rooms.RoomMother.Rooms.ids;
-import static com.masterproject.musigame.rooms.RoomMother.generateCreator;
-import static com.masterproject.musigame.rooms.RoomMother.roomBuilder;
+import static com.masterproject.musigame.rooms.RoomMother.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -146,16 +146,16 @@ class RoomsControllerTests {
     @ParameterizedTest
     @MethodSource("roundIdProvider")
     @DisplayName("submit sentence with room id, current boss id, round id and sentence")
-    void submitSentenceWithRoomIdCurrentBossIdRoundIdAndSentence() throws Exception {
+    void submitSentenceWithRoomIdCurrentBossIdRoundIdAndSentence(Integer roundId) throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).build();
-        int roundId = 0;
         String sentence = "sentence";
+        var roundIdMinusOne = roundId - 1;
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
 
-        mockRoom.getRounds().get(roundId).setCurrentBoss(creator);
-        mockRoom.getRounds().get(roundId).setSentence(sentence);
+        mockRoom.getRounds().get(roundIdMinusOne).setCurrentBoss(creator);
+        mockRoom.getRounds().get(roundIdMinusOne).setSentence(sentence);
 
         when(service.submitSentence(mockRoom, roundId, sentence)).thenReturn(Optional.of(mockRoom));
 
@@ -166,7 +166,7 @@ class RoomsControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
-                .andExpect(jsonPath("$.rounds[" + roundId + "].sentence").value(sentence));
+                .andExpect(jsonPath("$.rounds[" + roundIdMinusOne + "].sentence").value(sentence));
     }
 
     @Test
@@ -247,6 +247,92 @@ class RoomsControllerTests {
                 .andExpect(content().string("Room is full"));
     }
 
+    @ParameterizedTest
+    @MethodSource("roundIdProvider")
+    @DisplayName("submit a song successfully")
+    void submitSongSuccessfully(Integer roundId) throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+        Song song = SongMother.songBuilder().build();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        if (mockRoom.getRounds().get(roundId - 1).getCurrentBoss() == null) {
+            mockRoom.getRounds().get(roundId - 1).setCurrentBoss(creator);
+        }
+
+
+        var updatedRoom = Room.builder()
+                .game(mockRoom.getGame())
+                .creator(mockRoom.getCreator())
+                .roomId(mockRoom.getRoomId())
+                .players(mockRoom.getPlayers())
+                .rounds(generateRounds(creator))
+                .build();
+
+        List<Map<String, Song>> songs = updatedRoom.getRounds().get(roundId - 1).getSongSuggestions() == null ?
+                new ArrayList<>() : updatedRoom.getRounds().get(roundId - 1).getSongSuggestions();
+        songs.add(Collections.singletonMap(player.getPlayerId(), song));
+        updatedRoom.getRounds().get(roundId - 1).setSongSuggestions(songs);
+
+        when(service.submitSong(any(Room.class), any(Integer.class), any(String.class), any(Song.class)))
+                .thenReturn(Optional.of(updatedRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-song", ROOM_ID.getValue())
+                        .param("playerId", player.getPlayerId())
+                        .param("roundId", String.valueOf(roundId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(song.toJson()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
+                .andExpect(jsonPath("$.rounds[" + (roundId - 1) + "].songSuggestions[0]." + player.getPlayerId() + ".title").value(song.getTitle()));
+    }
+
+    @Test
+    @DisplayName("submit a song with unknown room id")
+    void submitSongWithUnknownRoomId() throws Exception {
+        Player player = RoomMother.generatePlayer();
+        Song song = SongMother.songBuilder().build();
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-song", ROOM_ID.getValue())
+                        .param("playerId", player.getPlayerId())
+                        .param("roundId", "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(song.toJson()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("submit a song when player is the current boss")
+    void submitSongWhenPlayerIsTheCurrentBoss() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+        Song song = SongMother.songBuilder().build();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-song", ROOM_ID.getValue())
+                        .param("playerId", creator.getPlayerId())
+                        .param("roundId", "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(song.toJson()))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Player is the current boss"));
+    }
+
     static Room generateARoomFullOfPlayers() {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
@@ -266,9 +352,9 @@ class RoomsControllerTests {
 
     static Stream<Arguments> roundIdProvider() {
         return Stream.of(
-                Arguments.of(0),
                 Arguments.of(1),
-                Arguments.of(2)
+                Arguments.of(2),
+                Arguments.of(3)
         );
     }
 
