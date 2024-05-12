@@ -9,7 +9,7 @@ import Spacer from '../../../components/Spacer';
 import colors from '../../../assets/styles/colors';
 import MusicDisplayerCard from '../../../components/MusicDisplayerCard';
 
-const PlayerScreen = ({ player, roundNumber }) => {
+export const PlayerScreen = ({ player, roundNumber }) => {
     const clockLoading = require('../../../assets/gif/clock-loading.gif');
     const [isSituationSubmitted, setIsSituationSubmitted] = useState(false);
     const [isSongSubmitted, setIsSongSubmitted] = useState(false);
@@ -100,5 +100,3 @@ const PlayerScreen = ({ player, roundNumber }) => {
         </div>
     );
 };
-
-export default PlayerScreen;

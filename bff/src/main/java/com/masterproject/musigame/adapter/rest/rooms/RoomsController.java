@@ -16,6 +16,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/rooms", produces = {APPLICATION_JSON_VALUE})
+@CrossOrigin(origins = "http://localhost:3000")
 public class RoomsController {
     private final RoomsService service;
     private static final String ROOM_NOT_FOUND = "Room not found";

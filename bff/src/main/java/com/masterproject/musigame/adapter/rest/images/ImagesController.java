@@ -14,11 +14,11 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/images", produces = {APPLICATION_JSON_VALUE})
+@CrossOrigin(origins = "http://localhost:3000")
 public class ImagesController {
     private final ImagesService service;
 
     @GetMapping("/{imageId}")
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getImageById(@PathVariable String imageId) {
         var image = service.findById(ImageId.of(imageId));
         if (image.isPresent()) {
@@ -29,7 +29,6 @@ public class ImagesController {
     }
 
     @GetMapping
-    @CrossOrigin(origins = "http://localhost:3000")
     public ResponseEntity<Object> getAllImages() {
         return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
     }

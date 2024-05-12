@@ -1,13 +1,21 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import "./index.css";
+import { WelcomeScreen } from "./pages/welcomescreen/WelcomeScreen";
+import { GameHolderScreen } from "./pages/gamescreens/GameHolderScreen";
+import reportWebVitals from "./reportWebVitals";
+import GameCreationScreen from "./pages/gamecreationscreen/GameCreationScreen";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const router = createBrowserRouter([
+  { path: "/", element: <WelcomeScreen /> },
+  { path: "/game", element: <GameHolderScreen /> },
+  { path: "/waiting", element: <GameCreationScreen /> },
+]);
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
 
