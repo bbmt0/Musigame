@@ -54,6 +54,7 @@ public class FirebaseRoomsRepository implements RoomsRepository {
                 throw new FirebaseRoomDocumentNotFound();
             }
         } catch (Exception e) {
+            Thread.currentThread().interrupt();
             throw new FirebaseRoomDocumentNotFound();
         }
     }
