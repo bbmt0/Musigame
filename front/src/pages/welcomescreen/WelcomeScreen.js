@@ -33,7 +33,9 @@ export const WelcomeScreen = () => {
 
   useEffect(() => {
     if (roomData.roomId !== undefined) {
-      navigate("/waiting", { state: { roomData: roomData, playerData: player } });
+      navigate("/waiting", {
+        state: { roomData: roomData, playerData: player },
+      });
     }
   }, [roomData]);
 
@@ -53,7 +55,9 @@ export const WelcomeScreen = () => {
       });
   };
 
-  const handleJoinGame = () => {};
+  const handleJoinGame = () => {
+    navigate("/join", { state: { playerData: player } });
+  };
 
   const handleAvatarChange = () => {
     if (avatarId + 1 === allAvatars.length) {
