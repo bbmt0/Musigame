@@ -1,7 +1,6 @@
 package com.masterproject.musigame.rooms;
 
 import com.masterproject.musigame.songs.Song;
-import com.masterproject.musigame.songs.SongMother;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -10,6 +9,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import static com.masterproject.musigame.rooms.RoomMother.Rooms.ids;
@@ -104,6 +106,27 @@ class RoomsServiceTests {
         room.getRounds().getFirst().setCurrentBoss(player);
 
         var actual = service.submitSong(room, 1, player.getPlayerId(), song);
+        assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
+    }
+
+    @Test
+    @DisplayName("select a song")
+    void selectSong() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        Song song = songBuilder().build();
+        Player player = generatePlayer();
+        var players = new ArrayList<>(room.getPlayers());
+        players.add(player);
+        room.setPlayers(players);
+        room.getRounds().getFirst().setCurrentBoss(creator);
+        room.getRounds().getFirst().setSongSuggestions(List.of(Map.of(player.getPlayerId(), song)));
+
+        var actual = service.selectSong(room, 1, player.getPlayerId());
+        room.getRounds().getFirst().setWinningSong(Map.of(player.getPlayerId(), song));
+        room.getRounds().get(1).setCurrentBoss(player);
+        room.getPlayers().stream().filter(p -> p.getPlayerId().equals(player.getPlayerId())).findFirst().get().setScore(player.getScore() + 1);
+
         assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
     }
 
