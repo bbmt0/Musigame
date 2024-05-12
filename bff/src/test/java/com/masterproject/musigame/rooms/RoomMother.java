@@ -20,6 +20,7 @@ public class RoomMother {
                 .playerId(playerIdArbitrary.sample())
                 .username(usernameArbitrary.sample())
                 .profilePictureUrl(profilePictureUrlArbitrary.sample())
+                .score(0)
                 .build();
     }
 
@@ -32,8 +33,9 @@ public class RoomMother {
                 .playerId(playerIdArbitrary.sample())
                 .username(usernameArbitrary.sample())
                 .profilePictureUrl(profilePictureUrlArbitrary.sample())
+                .score(0)
                 .build();
-        return new Creator(player.getPlayerId(), player.getUsername(), player.getProfilePictureUrl());
+        return new Creator(player.getPlayerId(), player.getUsername(), player.getProfilePictureUrl(), player.getScore());
     }
 
     public static List<Round> generateRounds(Creator creator) {

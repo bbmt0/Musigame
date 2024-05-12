@@ -25,6 +25,8 @@ public class RoomsController {
     private static final String GAME_ALREADY_STARTED = "Game already started";
     private static final String PLAYER_ALREADY_IN_ROOM = "Player already in room";
     private static final String ROOM_FULL = "Room is full";
+    private static final String ROUND_IS_NOT_CURRENT = "Round is not current";
+    private static final String WINNING_SONG_ALREADY_SELECTED = "Winning song already selected";
 
 
     @GetMapping("/{roomId}")
@@ -67,6 +69,9 @@ public class RoomsController {
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
         }
+        if (room.get().getRounds().get(roundId - 1).getCurrentBoss() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ROUND_IS_NOT_CURRENT);
+        }
         var currentBoss = room.get().getRounds().get(roundId - 1).getCurrentBoss();
         if (!currentBoss.getPlayerId().equals(currentBossId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(NOT_CURRENT_BOSS);
@@ -85,6 +90,9 @@ public class RoomsController {
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
         }
+        if (room.get().getRounds().get(roundId - 1).getCurrentBoss() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ROUND_IS_NOT_CURRENT);
+        }
         var currentBoss = room.get().getRounds().get(roundId - 1).getCurrentBoss();
         if (currentBoss.getPlayerId().equals(playerId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(CURRENT_BOSS);
@@ -102,7 +110,6 @@ public class RoomsController {
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
-
         }
         if (room.get().getPlayers().stream().anyMatch(p -> p.getPlayerId().equals(player.getPlayerId()))) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(PLAYER_ALREADY_IN_ROOM);
@@ -114,6 +121,30 @@ public class RoomsController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ROOM_FULL);
         }
         var updatedRoom = service.join(room.get(), player);
+        if (updatedRoom.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping("/{roomId}/select-song")
+    public ResponseEntity<Object> selectSong(@PathVariable String roomId, @RequestParam String currentBossId, @RequestParam String playerId, @RequestParam Integer roundId) {
+        var room = retrieveRoom(roomId);
+        if (room.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
+        }
+        if (room.get().getRounds().get(roundId - 1).getCurrentBoss() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ROUND_IS_NOT_CURRENT);
+        }
+        var currentBoss = room.get().getRounds().get(roundId - 1).getCurrentBoss();
+        if (!currentBoss.getPlayerId().equals(currentBossId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(NOT_CURRENT_BOSS);
+        }
+        if (room.get().getRounds().get(roundId - 1).getWinningSong() != null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(WINNING_SONG_ALREADY_SELECTED);
+        }
+        var updatedRoom = service.selectSong(room.get(), roundId, playerId);
         if (updatedRoom.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
         } else {

@@ -14,5 +14,6 @@ public class Round {
     private Integer roundNumber;
     private String sentence;
     private Player currentBoss;
+    private Map<String, Song> winningSong;
     private List<Map<String, Song>> songSuggestions;
 }

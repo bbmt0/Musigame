@@ -170,6 +170,55 @@ class RoomsControllerTests {
     }
 
     @Test
+    @DisplayName("submit sentence with unknown room id")
+    void submitSentenceWithUnknownRoomId() throws Exception {
+        Creator creator = generateCreator();
+        String sentence = "sentence";
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-sentence", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("roundId", "1")
+                        .param("sentence", sentence))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("submit sentence with wrong current boss id")
+    void submitSentenceWithWrongCurrentBossId() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        String sentence = "sentence";
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-sentence", ROOM_ID.getValue())
+                        .param("currentBossId", "wrongCurrentBossId")
+                        .param("roundId", "1")
+                        .param("sentence", sentence))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Player is not the current boss"));
+    }
+
+    @Test
+    @DisplayName("submit sentence with wrong round id")
+    void submitSentenceWithWrongRoundId() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        String sentence = "sentence";
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-sentence", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("roundId", "2")
+                        .param("sentence", sentence))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Round is not current"));
+    }
+
+    @Test
     @DisplayName("join player to room with room id")
     void joinPlayerToRoomWithRoomId() throws Exception {
         Creator creator = generateCreator();
@@ -245,6 +294,24 @@ class RoomsControllerTests {
                         .content(objectMapper.writeValueAsString(player)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Room is full"));
+    }
+
+    @Test
+    @DisplayName("join player when game is already started")
+    void joinPlayerWhenGameIsAlreadyStarted() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+        mockRoom.getGame().setGameLaunched(true);
+        mockRoom.getGame().setGameType(GameType.IMPOSTER);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/join", ROOM_ID.getValue())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(player)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Game already started"));
     }
 
     @ParameterizedTest
@@ -332,6 +399,159 @@ class RoomsControllerTests {
                 .andExpect(status().isForbidden())
                 .andExpect(content().string("Player is the current boss"));
     }
+
+    @Test
+    @DisplayName("submit a song with wrong round id")
+    void submitSongWithWrongRoundId() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+        Song song = SongMother.songBuilder().build();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-song", ROOM_ID.getValue())
+                        .param("playerId", player.getPlayerId())
+                        .param("roundId", "2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(song.toJson()))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Round is not current"));
+    }
+
+    @Test
+    @DisplayName("select a song successfully")
+    void selectSongSuccessfully() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+        Song song = SongMother.songBuilder().build();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        var updatedRoom = Room.builder()
+                .game(mockRoom.getGame())
+                .creator(mockRoom.getCreator())
+                .roomId(mockRoom.getRoomId())
+                .players(mockRoom.getPlayers())
+                .rounds(generateRounds(creator))
+                .build();
+
+        List<Map<String, Song>> songs = updatedRoom.getRounds().getFirst().getSongSuggestions() == null ?
+                new ArrayList<>() : updatedRoom.getRounds().getFirst().getSongSuggestions();
+        songs.add(Collections.singletonMap(player.getPlayerId(), song));
+        updatedRoom.getRounds().getFirst().setSongSuggestions(songs);
+        updatedRoom.getPlayers().get(1).setScore(1);
+        updatedRoom.getRounds().getFirst().setWinningSong(songs.getFirst());
+        updatedRoom.getRounds().get(1).setCurrentBoss(player);
+
+        when(service.selectSong(any(Room.class), any(Integer.class), any(String.class)))
+                .thenReturn(Optional.of(updatedRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/select-song", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("playerId", player.getPlayerId())
+                        .param("roundId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
+                .andExpect(jsonPath("$.rounds[0].winningSong." + player.getPlayerId() + ".title").value(song.getTitle()))
+                .andExpect(jsonPath("$.players[1].score").value(1))
+                .andExpect(jsonPath("$.rounds[1].currentBoss.playerId").value(player.getPlayerId()));
+    }
+
+    @Test
+    @DisplayName("select a song with unknown room id")
+    void selectSongWithUnknownRoomId() throws Exception {
+        Creator creator = generateCreator();
+        Player player = RoomMother.generatePlayer();
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/select-song", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("playerId", player.getPlayerId())
+                        .param("roundId", "1"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("select a song with wrong current boss id")
+    void selectSongWithWrongCurrentBossId() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/select-song", ROOM_ID.getValue())
+                        .param("currentBossId", "wrongCurrentBossId")
+                        .param("playerId", player.getPlayerId())
+                        .param("roundId", "1"))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Player is not the current boss"));
+    }
+
+    @Test
+    @DisplayName("select a song with already selected winning song")
+    void selectSongWithAlreadySelectedWinningSong() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+        Song song = SongMother.songBuilder().build();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+        List<Map<String, Song>> songs = mockRoom.getRounds().getFirst().getSongSuggestions() == null ?
+                new ArrayList<>() : mockRoom.getRounds().getFirst().getSongSuggestions();
+        songs.add(Collections.singletonMap(player.getPlayerId(), song));
+        mockRoom.getRounds().getFirst().setSongSuggestions(songs);
+        mockRoom.getPlayers().get(1).setScore(1);
+        mockRoom.getRounds().getFirst().setWinningSong(songs.getFirst());
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/select-song", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("playerId", player.getPlayerId())
+                        .param("roundId", "1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Winning song already selected"));
+    }
+
+    @Test
+    @DisplayName("select a song with wrong round id")
+    void selectSongWithWrongRoundId() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/select-song", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("playerId", player.getPlayerId())
+                        .param("roundId", "2"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Round is not current"));
+    }
+
 
     static Room generateARoomFullOfPlayers() {
         Creator creator = generateCreator();

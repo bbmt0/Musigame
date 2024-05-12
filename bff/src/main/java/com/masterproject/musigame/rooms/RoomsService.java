@@ -21,7 +21,7 @@ public class RoomsService {
     @Nonnull
     public Room save(@NonNull Creator creator) {
         var roomId = RoomId.generateId();
-
+        creator.setScore(0);
         Room room = Room.builder()
                 .roomId(roomId)
                 .creator(creator)
@@ -58,7 +58,33 @@ public class RoomsService {
     }
 
     @Nonnull
+    public Optional<Room> selectSong(@NonNull Room room, @NonNull Integer roundId, @NonNull String playerId) {
+        var round = room.getRounds().get(roundId - 1);
+        var mapSongPlayer = round.getSongSuggestions().stream()
+                .filter(map -> map.containsKey(playerId))
+                .findFirst()
+                .orElseThrow();
+        round.setWinningSong(mapSongPlayer);
+
+        var player = room.getPlayers().stream()
+                .filter(p -> p.getPlayerId().equals(playerId))
+                .findFirst()
+                .orElseThrow();
+        player.setScore(player.getScore() + 1);
+
+        var nextBoss = room.getPlayers().stream()
+                .filter(p -> !p.getPlayerId().equals(playerId))
+                .findFirst()
+                .orElseThrow();
+        if (roundId < 3) {
+            room.getRounds().get(roundId).setCurrentBoss(nextBoss);
+        }
+        return Optional.of(repository.save(room));
+    }
+
+    @Nonnull
     public Optional<Room> join(@NonNull Room room, @NonNull Player player) {
+        player.setScore(0);
         room.getPlayers().add(player);
         return Optional.of(repository.save(room));
     }

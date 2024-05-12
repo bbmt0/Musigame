@@ -91,14 +91,15 @@ public class FirebaseRoomsRepository implements RoomsRepository {
                 .playerId((String) data.get("playerId"))
                 .profilePictureUrl((String) data.get("profilePictureUrl"))
                 .username((String) data.get("username"))
+                .score(toIntExact((Long) data.get("score")))
                 .build();
-        return new Player(player.getPlayerId(), player.getUsername(), player.getProfilePictureUrl());
+        return new Player(player.getPlayerId(), player.getUsername(), player.getProfilePictureUrl(), player.getScore());
     }
 
     private Creator extractCreator(Map<String, Object> data) {
         Map<String, Object> creatorData = (Map<String, Object>) data.get("creator");
         Player player = extractPlayer(creatorData);
-        return new Creator(player.getPlayerId(), player.getUsername(), player.getProfilePictureUrl());
+        return new Creator(player.getPlayerId(), player.getUsername(), player.getProfilePictureUrl(), player.getScore());
     }
 
     private List<Player> extractPlayers(Map<String, Object> data) {
@@ -126,6 +127,7 @@ public class FirebaseRoomsRepository implements RoomsRepository {
                     .roundNumber(toIntExact((Long) roundData.get("roundNumber")))
                     .sentence(roundData.get("sentence") == null ? null : (String) roundData.get("sentence"))
                     .songSuggestions(roundData.get("songSuggestions") == null ? null : (List<Map<String, Song>>) roundData.get("songSuggestions"))
+                    .winningSong(roundData.get("winningSong") == null ? null : (Map<String, Song>) roundData.get("winningSong"))
                     .build();
             rounds.add(round);
         }
