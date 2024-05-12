@@ -4,8 +4,12 @@ import GoBackButton from '../../components/GoBackButton';
 import InputTextBox from '../../components/InputTextBox';
 import JoinGameScreenStyles from './JoinGameScreenStyles';
 import colors from '../../assets/styles/colors';
+import { useLocation } from 'react-router-dom';
 
 const JoinGameScreen = () => {
+    const location = useLocation();
+    const playerData = location.state.playerData;
+    console.log(playerData);
     const [code, setCode] = useState('');
 
     const handleInputChange = (event) => {

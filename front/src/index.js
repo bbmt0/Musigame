@@ -6,11 +6,13 @@ import { WelcomeScreen } from "./pages/welcomescreen/WelcomeScreen";
 import { GameHolderScreen } from "./pages/gamescreens/GameHolderScreen";
 import reportWebVitals from "./reportWebVitals";
 import GameCreationScreen from "./pages/gamecreationscreen/GameCreationScreen";
+import JoinGameScreen from "./pages/joingamescreen/JoinGameScreen";
 
 const router = createBrowserRouter([
   { path: "/", element: <WelcomeScreen /> },
   { path: "/game", element: <GameHolderScreen /> },
   { path: "/waiting", element: <GameCreationScreen /> },
+  { path: "/join", element: <JoinGameScreen /> },
 ]);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
