@@ -1,22 +1,19 @@
 package com.masterproject.musigame.adapter.db.rooms;
 
-import com.masterproject.musigame.configuration.firebase.FirebaseService;
 import com.masterproject.musigame.rooms.Room;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.masterproject.musigame.rooms.RoomMother.roomBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("integration")
 @Tag("db")
-@WebMvcTest(FirebaseRoomsRepository.class)
+@SpringBootTest
 @DisplayName("FirebaseRoomsRepository should")
-@Import(FirebaseService.class)
 class FirebaseRoomsRepositoryTests {
     @Autowired
     private FirebaseRoomsRepository firebaseRoomsRepository;
