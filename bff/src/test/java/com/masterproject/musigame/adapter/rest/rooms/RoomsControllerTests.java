@@ -170,6 +170,55 @@ class RoomsControllerTests {
     }
 
     @Test
+    @DisplayName("submit sentence with unknown room id")
+    void submitSentenceWithUnknownRoomId() throws Exception {
+        Creator creator = generateCreator();
+        String sentence = "sentence";
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-sentence", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("roundId", "1")
+                        .param("sentence", sentence))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("submit sentence with wrong current boss id")
+    void submitSentenceWithWrongCurrentBossId() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        String sentence = "sentence";
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-sentence", ROOM_ID.getValue())
+                        .param("currentBossId", "wrongCurrentBossId")
+                        .param("roundId", "1")
+                        .param("sentence", sentence))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Player is not the current boss"));
+    }
+
+    @Test
+    @DisplayName("submit sentence with wrong round id")
+    void submitSentenceWithWrongRoundId() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        String sentence = "sentence";
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-sentence", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("roundId", "2")
+                        .param("sentence", sentence))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Round is not current"));
+    }
+
+    @Test
     @DisplayName("join player to room with room id")
     void joinPlayerToRoomWithRoomId() throws Exception {
         Creator creator = generateCreator();
