@@ -32,5 +32,12 @@ class ImagesServiceTests {
         assertThat(actual.get().getImageId().getValue()).isEqualTo(expected.getImageId().getValue());
     }
 
+    @Test
+    @DisplayName("get all images")
+    void getAllImages() {
+        var actual = service.findAll();
+        assertThat(actual.get().size()).isGreaterThan(0);
+    }
+
 
 }

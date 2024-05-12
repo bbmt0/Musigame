@@ -11,6 +11,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -31,6 +33,25 @@ public class FirebaseImagesRepository implements ImagesRepository {
             } else {
                 return Optional.empty();
             }
+        } catch (Exception e) {
+            Thread.currentThread().interrupt();
+        }
+        return Optional.empty();
+    }
+
+    @Nonnull
+    @Override
+    public Optional<List<Image>> findAll() {
+        try {
+            Iterable<DocumentReference> documentSnapshots = firebaseService.getDb().collection("images").listDocuments();
+            List<Image> images = new ArrayList<>();
+            for (DocumentReference documentReference : documentSnapshots) {
+                DocumentSnapshot documentSnapshot = documentReference.get().get();
+                ImageId imageId = ImageId.of(documentSnapshot.getId());
+                Image image = mapToImage(documentSnapshot, imageId);
+                images.add(image);
+            }
+            return Optional.of(images);
         } catch (Exception e) {
             Thread.currentThread().interrupt();
         }

@@ -54,4 +54,12 @@ class ImagesControllerTests {
         mvc.perform(MockMvcRequestBuilders.get("/api/v1/rooms/{roomId}", requestedId))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    @DisplayName("get all images")
+    void getAllImages() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/v1/images"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
 }

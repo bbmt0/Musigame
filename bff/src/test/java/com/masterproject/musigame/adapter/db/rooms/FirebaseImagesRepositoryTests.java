@@ -26,4 +26,12 @@ class FirebaseImagesRepositoryTests {
         assertThat(savedSong.isPresent()).isTrue();
         assertThat(savedSong2.isEmpty()).isTrue();
     }
+
+    @Test
+    @DisplayName("find all songs")
+    void findAllRooms() {
+        var savedSongs = firebaseImagesRepository.findAll();
+        assertThat(savedSongs.isPresent()).isTrue();
+        assertThat(savedSongs.get().size()).isGreaterThan(0);
+    }
 }
