@@ -25,4 +25,10 @@ class InMemoryRoomsRepository implements RoomsRepository {
         rooms.put(room.getRoomId(), room);
         return room;
     }
+
+    @Nonnull
+    @Override
+    public Room delete(@NonNull RoomId roomId) {
+        return rooms.remove(roomId);
+    }
 }

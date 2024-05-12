@@ -42,6 +42,24 @@ public class FirebaseRoomsRepository implements RoomsRepository {
 
     @Nonnull
     @Override
+    public Room delete(@NonNull RoomId roomId) {
+        DocumentReference docRef = firebaseService.getDb().collection("rooms").document(roomId.getValue());
+        try {
+            DocumentSnapshot documentSnapshot = docRef.get().get();
+
+            if (documentSnapshot.exists()) {
+                docRef.delete();
+                return mapToRoom(documentSnapshot, roomId);
+            } else {
+                throw new FirebaseRoomDocumentNotFound();
+            }
+        } catch (Exception e) {
+            throw new FirebaseRoomDocumentNotFound();
+        }
+    }
+
+    @Nonnull
+    @Override
     public Optional<Room> findById(@NonNull RoomId roomId) {
         DocumentReference docRef = firebaseService.getDb().collection("rooms").document(roomId.getValue());
         try {
@@ -57,6 +75,8 @@ public class FirebaseRoomsRepository implements RoomsRepository {
         }
         return Optional.empty();
     }
+
+
 
     private Room mapToRoom(DocumentSnapshot documentSnapshot, RoomId roomId) {
         Map<String, Object> data = documentSnapshot.getData();
