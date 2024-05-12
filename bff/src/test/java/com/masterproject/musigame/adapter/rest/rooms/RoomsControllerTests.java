@@ -296,6 +296,24 @@ class RoomsControllerTests {
                 .andExpect(content().string("Room is full"));
     }
 
+    @Test
+    @DisplayName("join player when game is already started")
+    void joinPlayerWhenGameIsAlreadyStarted() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+        mockRoom.getGame().setGameLaunched(true);
+        mockRoom.getGame().setGameType(GameType.IMPOSTER);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/join", ROOM_ID.getValue())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(player)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Game already started"));
+    }
+
     @ParameterizedTest
     @MethodSource("roundIdProvider")
     @DisplayName("submit a song successfully")
