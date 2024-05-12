@@ -1,14 +1,12 @@
 package com.masterproject.musigame.rooms;
 
+import com.masterproject.musigame.songs.Song;
 import jakarta.annotation.Nonnull;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +32,6 @@ public class RoomsService {
                 .players(new ArrayList<>(Collections.singletonList(creator)))
                 .rounds(generateRounds(creator))
                 .build();
-        room.getRounds().getFirst().setCurrentBoss(creator);
         return repository.save(room);
     }
 
@@ -47,7 +44,16 @@ public class RoomsService {
 
     @Nonnull
     public Optional<Room> submitSentence(@NonNull Room room, @NonNull Integer roundId, @NonNull String sentence) {
-        room.getRounds().get(roundId).setSentence(sentence);
+        room.getRounds().get(roundId - 1).setSentence(sentence);
+        return Optional.of(repository.save(room));
+    }
+
+    @Nonnull
+    public Optional<Room> submitSong(@NonNull Room room, @NonNull Integer roundId, @NonNull String playerId, @NonNull Song song) {
+        List<Map<String, Song>> songs = room.getRounds().get(roundId - 1).getSongSuggestions() == null ?
+                new ArrayList<>() : room.getRounds().get(roundId - 1).getSongSuggestions();
+        songs.add(Collections.singletonMap(playerId, song));
+        room.getRounds().get(roundId - 1).setSongSuggestions(songs);
         return Optional.of(repository.save(room));
     }
 
@@ -63,7 +69,9 @@ public class RoomsService {
         rounds.add(Round.builder().build());
         rounds.add(Round.builder().build());
         rounds.getFirst().setCurrentBoss(player);
+        rounds.getFirst().setRoundNumber(1);
+        rounds.get(1).setRoundNumber(2);
+        rounds.getLast().setRoundNumber(3);
         return rounds;
     }
-
 }

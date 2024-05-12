@@ -1,6 +1,10 @@
 package com.masterproject.musigame.rooms;
 
+import com.masterproject.musigame.songs.Song;
 import lombok.*;
+
+import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -10,4 +14,5 @@ public class Round {
     private Integer roundNumber;
     private String sentence;
     private Player currentBoss;
+    private List<Map<String, Song>> songSuggestions;
 }

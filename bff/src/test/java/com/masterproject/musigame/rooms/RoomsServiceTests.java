@@ -1,5 +1,7 @@
 package com.masterproject.musigame.rooms;
 
+import com.masterproject.musigame.songs.Song;
+import com.masterproject.musigame.songs.SongMother;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -12,6 +14,7 @@ import java.util.stream.Stream;
 
 import static com.masterproject.musigame.rooms.RoomMother.Rooms.ids;
 import static com.masterproject.musigame.rooms.RoomMother.*;
+import static com.masterproject.musigame.songs.SongMother.songBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Tag("unit")
@@ -73,10 +76,10 @@ class RoomsServiceTests {
     void submitSentence() {
         Creator creator = generateCreator();
         var room = service.save(creator);
-        room.getRounds().get(0).setSentence("sentence");
+        room.getRounds().getFirst().setSentence("sentence");
 
 
-        var actual = service.submitSentence(room, 0, "sentence");
+        var actual = service.submitSentence(room, 1, "sentence");
         assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
     }
 
@@ -88,6 +91,19 @@ class RoomsServiceTests {
         Player player = generatePlayer();
 
         var actual = service.join(room, player);
+        assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
+    }
+
+    @Test
+    @DisplayName("submit a song")
+    void submitSong() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        Song song = songBuilder().build();
+        Player player = generatePlayer();
+        room.getRounds().getFirst().setCurrentBoss(player);
+
+        var actual = service.submitSong(room, 1, player.getPlayerId(), song);
         assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
     }
 
