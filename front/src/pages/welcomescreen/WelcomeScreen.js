@@ -4,37 +4,54 @@ import colors from "../../assets/styles/colors";
 import AppButton from "../../components/AppButton";
 import InputTextBox from "../../components/InputTextBox";
 import styles from "./WelcomeScreenStyles";
+import { useNavigate } from "react-router-dom";
 
 export const WelcomeScreen = () => {
+  const navigate = useNavigate();
   const [player, setPlayer] = useState({
-    playerId: crypto.randomUUID() ,
-    avatarUrl: "",
+    playerId: crypto.randomUUID(),
+    profilePictureUrl: "",
     username: "",
   });
   const [pseudo, setPseudo] = useState("");
   const [avatarId, setAvatarId] = useState(1);
   const [avatarUrl, setAvatarUrl] = useState("");
   const [allAvatars, setAllAvatars] = useState([]);
+  const [roomData, setRoomData] = useState({});
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/v1/images")
       .then((response) => {
         setAllAvatars(response.data);
         setAvatarUrl(response.data[0].url);
-        setPlayer({ ...player, avatarUrl: response.data[0].url });
+        setPlayer({ ...player, profilePictureUrl: response.data[0].url });
       })
       .catch((error) => {
         console.error(error);
       });
   }, []);
 
+  useEffect(() => {
+    if (roomData.roomId !== undefined) {
+      navigate("/waiting", { state: { roomData: roomData, playerData: player } });
+    }
+  }, [roomData]);
 
   const handlePseudoChange = (event) => {
     setPseudo(event.target.value);
     setPlayer({ ...player, username: event.target.value });
   };
 
-  const handleCreateGame = () => {};
+  const handleCreateGame = () => {
+    axios
+      .post("http://localhost:8080/api/v1/rooms", player)
+      .then((response) => {
+        setRoomData(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   const handleJoinGame = () => {};
 
@@ -47,8 +64,6 @@ export const WelcomeScreen = () => {
     setAvatarUrl(allAvatars[avatarId].url);
     setPlayer({ ...player, avatarUrl: allAvatars[avatarId].url });
   };
-
-  console.log(player);
 
   return (
     <div style={styles.container}>
