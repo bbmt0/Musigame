@@ -25,6 +25,7 @@ public class RoomsService {
         Room room = Room.builder()
                 .roomId(roomId)
                 .creator(creator)
+                .currentRound(1)
                 .game(Game.builder()
                         .gameType(null)
                         .isGameLaunched(false)
@@ -78,6 +79,7 @@ public class RoomsService {
                 .orElseThrow();
         if (roundId < 3) {
             room.getRounds().get(roundId).setCurrentBoss(nextBoss);
+            room.setCurrentRound(roundId + 1);
         }
         return Optional.of(repository.save(room));
     }

@@ -12,6 +12,7 @@ public class Room {
     private RoomId roomId;
     private Game game;
     private Creator creator;
+    private Integer currentRound;
     private List<Player> players;
     private List<Round> rounds;
 }
