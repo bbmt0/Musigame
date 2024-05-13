@@ -5,6 +5,7 @@ import colors from "../../assets/styles/colors";
 import AppButton from "../../components/AppButton";
 import InputTextBox from "../../components/InputTextBox";
 import styles from "./WelcomeScreenStyles";
+import Spacer from "../../components/Spacer";
 
 export const WelcomeScreen = () => {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ export const WelcomeScreen = () => {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [allAvatars, setAllAvatars] = useState([]);
   const [roomData, setRoomData] = useState({});
+  const [code, setCode] = useState("");
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/v1/images")
@@ -55,9 +57,23 @@ export const WelcomeScreen = () => {
       });
   };
 
-  const handleJoinGame = () => {
-    navigate("/join", { state: { playerData: player } });
+  const handleInputChange = (event) => {
+    setCode(event.target.value);
   };
+
+   const handleJoinGame = () => {
+    axios
+      .put("http://localhost:8080/api/v1/rooms/" + code + "/join", player)
+      .then((response) => {
+        navigate("/waiting", {
+          state: { roomData: response.data, playerData: player },
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
 
   const handleAvatarChange = () => {
     if (avatarId + 1 === allAvatars.length) {
@@ -79,7 +95,7 @@ export const WelcomeScreen = () => {
         </h3>
       </div>
       {avatarUrl === "" ? (
-        "Chargement..."
+        <p style={styles.smallText}>Chargement...</p>
       ) : (
         <div style={styles.avatarCard}>
           <img src={avatarUrl} alt="Avatar" style={styles.avatar} />
@@ -105,11 +121,20 @@ export const WelcomeScreen = () => {
         bgColor={colors.MG_TEAL}
         color={"black"}
       ></AppButton>
+      <Spacer height={2}/>
+      <InputTextBox
+        label="Code de la partie"
+        placeholder={"Entrer le code"}
+        value={code}
+        onChange={handleInputChange}
+      >
+      </InputTextBox>
       <AppButton
         onClick={handleJoinGame}
         title={"Rejoindre une partie"}
         bgColor={colors.MG_TEAL}
         color={"black"}
+        disabled={code.length !== 5}
       ></AppButton>
     </div>
   );
