@@ -36,7 +36,7 @@ jobs:
       - name: Copy Firebase Config Test
         run: |
           mkdir -p src/test/resources/configuration
-          echo '${{ secrets.FIREBASE_CONFIG }}' > src/test/resources/configuration/firebase_key.json         
+          echo '${{ secrets.FIREBASE_CONFIG_TEST }}' > src/test/resources/configuration/firebase_key.json         
       - name: Build and test
         run: ./gradlew clean build jacocoTestReport sonar
         env:
