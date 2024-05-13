@@ -133,7 +133,7 @@ class RoomsServiceTests {
 
     static Stream<Arguments> gameTypeProvider() {
         return Stream.of(
-                Arguments.of(GameType.IMPOSTER)
+                Arguments.of(GameType.BOSS_SELECTION)
         );
     }
 

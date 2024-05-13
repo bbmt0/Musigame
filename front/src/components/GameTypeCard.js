@@ -1,6 +1,5 @@
 import React from 'react';
 import colors from '../assets/styles/colors';
-import { useState } from 'react';
 
 const GameModeCard = ({ icon, title, description, onClick, isSelected }) => {
     const handleOnClick = () => {

@@ -303,7 +303,7 @@ class RoomsControllerTests {
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
         Player player = RoomMother.generatePlayer();
         mockRoom.getGame().setGameLaunched(true);
-        mockRoom.getGame().setGameType(GameType.IMPOSTER);
+        mockRoom.getGame().setGameType(GameType.BOSS_SELECTION);
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
 
@@ -566,7 +566,7 @@ class RoomsControllerTests {
 
     static Stream<Arguments> gameTypeProvider() {
         return Stream.of(
-                Arguments.of(GameType.IMPOSTER)
+                Arguments.of(GameType.BOSS_SELECTION)
         );
     }
 
