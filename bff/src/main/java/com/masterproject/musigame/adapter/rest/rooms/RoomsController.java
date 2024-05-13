@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@CrossOrigin
+@CrossOrigin("http://localhost:3000")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
