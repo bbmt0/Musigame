@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@CrossOrigin("http://localhost:3000")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "api/v1/songs", produces = {APPLICATION_JSON_VALUE})
-@CrossOrigin(origins = "http://localhost:3000")
 public class SongsController {
     private final SongsService service;
 
