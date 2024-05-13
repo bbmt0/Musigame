@@ -1,102 +1,190 @@
-import React, { useState } from 'react';
-import GoBackButton from '../../../components/GoBackButton';
-import PlayerCard from '../../../components/PlayerCard';
-import InputTextBox from '../../../components/InputTextBox';
-import { PlayerScreenStyles as styles } from './PlayerScreenStyles';
-import MusicDisplayerGrid from '../../../components/MusicDisplayerGrid';
-import AppButton from '../../../components/AppButton';
-import Spacer from '../../../components/Spacer';
-import colors from '../../../assets/styles/colors';
-import MusicDisplayerCard from '../../../components/MusicDisplayerCard';
+import React, { useEffect, useState } from "react";
+import GoBackButton from "../../../components/GoBackButton";
+import PlayerCard from "../../../components/PlayerCard";
+import InputTextBox from "../../../components/InputTextBox";
+import { PlayerScreenStyles as styles } from "./PlayerScreenStyles";
+import MusicDisplayerGrid from "../../../components/MusicDisplayerGrid";
+import AppButton from "../../../components/AppButton";
+import Spacer from "../../../components/Spacer";
+import colors from "../../../assets/styles/colors";
+import MusicDisplayerCard from "../../../components/MusicDisplayerCard";
+import axios from "axios";
 
-export const PlayerScreen = ({ player, roundNumber }) => {
-    const clockLoading = require('../../../assets/gif/clock-loading.gif');
-    const [isSituationSubmitted, setIsSituationSubmitted] = useState(false);
-    const [isSongSubmitted, setIsSongSubmitted] = useState(false);
-    const [isReadOnly, setIsReadOnly] = useState(false);
-    const [bossSituation, setBossSituation] = useState('');
-    const [songSearch, setSongSearch] = useState('');
-    const [selectedSong, setSelectedSong] = useState('');
-    const handleSongSearchChange = (event) => {
-        setSongSearch(event.target.value);
-    };
-    const handleSelectedSong = (song) => {
-        setIsReadOnly(true)
-        setSelectedSong(song);
-    }
-    const handleCancel = () => {
-        setIsReadOnly(false);
-        setSelectedSong(null);
-    }
-    const handleConfirmSelection = () => {
-        setIsSongSubmitted(true);
-    }
-    // Simulate the boss submitting a situation
-    setTimeout(() => {
-        setIsSituationSubmitted(true);
-        setBossSituation('Balade en ville la nuit');
-    }, 1000);
+export const PlayerScreen = ({ playerData, roomData }) => {
+  const clockLoading = require("../../../assets/gif/clock-loading.gif");
+  const isSituationSubmitted =
+    roomData.rounds[roomData.currentRound - 1].sentence !== null;
+  const submittedSentence = roomData.rounds[roomData.currentRound - 1].sentence;
+  const [isSongSubmitted, setIsSongSubmitted] = useState(
+    roomData.rounds[roomData.currentRound - 1].songSuggestions &&
+      roomData.rounds[roomData.currentRound - 1].songSuggestions.filter(
+        (song) => song.playerId === playerData.playerId
+      ).length > 0
+  );
+  const [isReadOnly, setIsReadOnly] = useState(false);
+  const [songSearch, setSongSearch] = useState("");
+  const [selectedSong, setSelectedSong] = useState("");
+  const [songsData, setSongsData] = useState([]);
 
-    return (
-        <div style={styles.container}>
-            <GoBackButton style={styles.backButton} title="Quitter la partie" bgColor='black' color='white' />
-            <h4 style={styles.h4}>{roundNumber}er tour</h4>
-            <PlayerCard username={player.username} avatar={player.avatar} />
-            <p style={styles.smallText}>Tu es un joueur pour ce round.</p>
-            {!isSituationSubmitted && (
-                <>
-                    <h4 style={styles.h4}>En attente du boss</h4>
-                    <p style={styles.smallText}>Le boss n'a pas encore soumis la situation.</p>
-                    <img style={styles.gif} src={clockLoading} />
-                </>
-            )}
-            {isSongSubmitted && (
-                <>
-                    <p style={styles.smallText}>Tu as proposé {selectedSong.title} de {selectedSong.artist} pour la situation :</p>
-                    <p style={styles.situationText}>"{bossSituation}"</p>
-                    <img style={styles.gif} src={clockLoading} />
-                    <Spacer height={3}/>
-                    <p style={styles.smallText}>Patiente, les autres joueurs sont encore en pleine réflexion !</p>
-                </>
-            )}
-            {isSituationSubmitted
-                && !isSongSubmitted
-                && (
-                    <>
-                        <p style={styles.smallText}>La situation choisie est : </p>
-                        <p style={styles.situationText}>"{bossSituation}"</p>
-                        <InputTextBox
-                            label="Chercher une musique"
-                            placeholder="Darude Sandstorm"
-                            value={songSearch}
-                            onChange={handleSongSearchChange}
-                            readOnly={isReadOnly}
-                        />
-                        {songSearch && !selectedSong && (
-                            <>
-                                <MusicDisplayerGrid songSearch={songSearch} onSongSelect={handleSelectedSong} />
-                            </>
-                        )}
-                        {selectedSong
-                            && !isSongSubmitted
-                            && (
-                                <>
-                                    <Spacer height={2} />
-                                    <MusicDisplayerCard
-                                        musicArtist={selectedSong.artist}
-                                        musicTitle={selectedSong.title}
-                                        musicLogoUrl={selectedSong.logoUrl}
-                                    />
-                                    <p style={styles.smallText}>Êtes-vous sûr de vouloir choisir cette musique ? </p>
-                                    <div style={styles.confirmationBox}>
-                                        <AppButton title="Annuler" onClick={handleCancel} bgColor='white' />
-                                        <Spacer width={4} />
-                                        <AppButton title="Confirmer" onClick={handleConfirmSelection} bgColor={colors.MG_TEAL} />
-                                    </div>
-                                </>
-                            )}
-                    </>
-                )}
-        </div>
+  const handleSongSearchChange = (event) => {
+    setSongSearch(event.target.value);
+    axios
+      .get("http://localhost:8080/api/v1/songs/" + songSearch)
+      .then((response) => {
+        setSongsData(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+  const handleSelectedSong = (song) => {
+    setIsReadOnly(true);
+    setSelectedSong(song);
+  };
+  const handleCancel = () => {
+    setIsReadOnly(false);
+    setSelectedSong(null);
+  };
+  const handleConfirmSelection = () => {
+    axios
+      .put(
+        "http://localhost:8080/api/v1/rooms/" +
+          roomData.roomId.value +
+          "/submit-song",
+        {
+          songId: selectedSong.songId.value,
+          title: selectedSong.title,
+          artistNames: selectedSong.artistNames,
+          imageUrl: selectedSong.imageUrl,
+        },
+        {
+          params: {
+            playerId: playerData.playerId,
+            roundId: roomData.currentRound,
+          },
+        }
+      )
+      .then(setIsSongSubmitted(true));
+  };
+
+  console.log(
+    roomData.rounds[roomData.currentRound - 1].songSuggestions &&
+      roomData.rounds[roomData.currentRound - 1].songSuggestions.some(
+        (songMap) => {
+          return songMap.hasOwnProperty(playerData.playerId);
+        }
+      )
+  );
+
+  console.log(selectedSong);
+
+  useEffect(() => {
+    setIsSongSubmitted(
+      roomData.rounds[roomData.currentRound - 1].songSuggestions &&
+        roomData.rounds[roomData.currentRound - 1].songSuggestions.some(
+          (songMap) => {
+            return songMap.hasOwnProperty(playerData.playerId);
+          }
+        )
     );
+    if (isSongSubmitted) {
+      roomData.rounds[roomData.currentRound - 1].songSuggestions.forEach(
+        (songMap) => {
+          if (songMap.hasOwnProperty(playerData.playerId)) {
+            setSelectedSong(songMap[playerData.playerId]);
+          }
+        }
+      );
+    }
+  }, [roomData]);
+  const roundText =
+    roomData.currentRound === 1
+      ? "1er tour"
+      : `${roomData.currentRound}ème tour`;
+  return (
+    <div style={styles.container}>
+      <GoBackButton
+        style={styles.backButton}
+        title="Quitter la partie"
+        bgColor="black"
+        color="white"
+      />
+      <h4 style={styles.h4}>{roundText}</h4>
+      <PlayerCard
+        username={playerData.username}
+        avatar={playerData.profilePictureUrl}
+      />
+      <p style={styles.smallText}>Tu es un joueur pour ce round.</p>
+      {!isSituationSubmitted && (
+        <>
+          <h4 style={styles.h4}>En attente du boss</h4>
+          <p style={styles.smallText}>
+            Le boss n'a pas encore soumis la situation.
+          </p>
+          <img style={styles.gif} src={clockLoading} />
+        </>
+      )}
+      {isSongSubmitted && (
+        <>
+          <p style={styles.smallText}>
+            Tu as proposé {selectedSong.title} de {selectedSong.artistNames}{" "}
+            pour la situation :
+          </p>
+          <p style={styles.situationText}>"{submittedSentence}"</p>
+          <img style={styles.gif} src={clockLoading} />
+          <Spacer height={3} />
+          <p style={styles.smallText}>
+            Patiente, les autres joueurs sont encore en pleine réflexion !
+          </p>
+        </>
+      )}
+      {isSituationSubmitted && !isSongSubmitted && (
+        <>
+          <p style={styles.smallText}>La situation choisie est : </p>
+          <p style={styles.situationText}>"{submittedSentence}"</p>
+          <InputTextBox
+            label="Chercher une musique"
+            placeholder="Darude Sandstorm"
+            value={songSearch}
+            onChange={handleSongSearchChange}
+            readOnly={isReadOnly}
+          />
+          {songSearch && !selectedSong && (
+            <>
+              <MusicDisplayerGrid
+                songsData={songsData}
+                onSongSelect={handleSelectedSong}
+              />
+            </>
+          )}
+          {selectedSong && !isSongSubmitted && (
+            <>
+              <Spacer height={2} />
+              <MusicDisplayerCard
+                musicArtistNames={selectedSong.artistNames}
+                musicTitle={selectedSong.title}
+                musicImageUrl={selectedSong.imageUrl}
+              />
+              <p style={styles.smallText}>
+                Êtes-vous sûr de vouloir choisir cette musique ?{" "}
+              </p>
+              <div style={styles.confirmationBox}>
+                <AppButton
+                  title="Annuler"
+                  onClick={handleCancel}
+                  bgColor="white"
+                />
+                <Spacer width={4} />
+                <AppButton
+                  title="Confirmer"
+                  onClick={handleConfirmSelection}
+                  bgColor={colors.MG_TEAL}
+                />
+              </div>
+            </>
+          )}
+        </>
+      )}
+    </div>
+  );
 };

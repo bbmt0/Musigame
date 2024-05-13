@@ -85,6 +85,7 @@ public class RoomMother {
             private RoomId roomId;
             private Game game = Game.builder().isGameLaunched(false).gameType(null).build();
             private Creator creator = generateCreator();
+            private Integer currentRound = 1;
             private List<Player> players = generatePlayersList();
             private List<Round> rounds;
 
@@ -110,12 +111,12 @@ public class RoomMother {
 
             public Room build() {
                 this.rounds = generateRounds(creator);
-                return Room.builder().roomId(roomId).game(game).creator(creator).players(players).rounds(rounds).build();
+                return Room.builder().roomId(roomId).game(game).creator(creator).currentRound(currentRound).players(players).rounds(rounds).build();
             }
 
             public Room buildNoPlayers() {
                 this.rounds = generateRounds(creator);
-                return Room.builder().roomId(roomId).game(game).creator(creator).players(Collections.singletonList(creator)).rounds(rounds).build();
+                return Room.builder().roomId(roomId).game(game).creator(creator).currentRound(1).players(Collections.singletonList(creator)).rounds(rounds).build();
             }
 
             private List<Player> generatePlayersList() {

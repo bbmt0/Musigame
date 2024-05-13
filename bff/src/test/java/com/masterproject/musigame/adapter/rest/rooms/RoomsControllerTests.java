@@ -150,6 +150,7 @@ class RoomsControllerTests {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).build();
         String sentence = "sentence";
+        mockRoom.setCurrentRound(roundId);
         var roundIdMinusOne = roundId - 1;
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
@@ -322,6 +323,7 @@ class RoomsControllerTests {
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
         Player player = RoomMother.generatePlayer();
         Song song = SongMother.songBuilder().build();
+        mockRoom.setCurrentRound(1);
 
         var players = new ArrayList<>(mockRoom.getPlayers());
         players.add(player);
@@ -338,6 +340,7 @@ class RoomsControllerTests {
         var updatedRoom = Room.builder()
                 .game(mockRoom.getGame())
                 .creator(mockRoom.getCreator())
+                .currentRound(mockRoom.getCurrentRound())
                 .roomId(mockRoom.getRoomId())
                 .players(mockRoom.getPlayers())
                 .rounds(generateRounds(creator))

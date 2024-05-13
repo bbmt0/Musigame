@@ -30,6 +30,7 @@ public class FirebaseRoomsRepository implements RoomsRepository {
             roomData.put("id", room.getRoomId().getValue());
             roomData.put("game", room.getGame());
             roomData.put("creator", room.getCreator());
+            roomData.put("currentRound", room.getCurrentRound());
             roomData.put("players", room.getPlayers());
             roomData.put("rounds", room.getRounds());
             docRef.set(roomData);
@@ -86,11 +87,13 @@ public class FirebaseRoomsRepository implements RoomsRepository {
             Creator creator = extractCreator(data);
             List<Player> players = extractPlayers(data);
             List<Round> rounds = extractRounds(data);
+            Integer currentRound = toIntExact((Long) data.get("currentRound"));
 
             return Room.builder()
                     .roomId(roomId)
                     .game(game)
                     .creator(creator)
+                    .currentRound(currentRound)
                     .players(players)
                     .rounds(rounds)
                     .build();
