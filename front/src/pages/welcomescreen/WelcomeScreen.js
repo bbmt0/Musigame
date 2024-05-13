@@ -1,10 +1,10 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import colors from "../../assets/styles/colors";
 import AppButton from "../../components/AppButton";
 import InputTextBox from "../../components/InputTextBox";
 import styles from "./WelcomeScreenStyles";
-import { useNavigate } from "react-router-dom";
 
 export const WelcomeScreen = () => {
   const navigate = useNavigate();
@@ -66,7 +66,7 @@ export const WelcomeScreen = () => {
       setAvatarId(avatarId + 1);
     }
     setAvatarUrl(allAvatars[avatarId].url);
-    setPlayer({ ...player, avatarUrl: allAvatars[avatarId].url });
+    setPlayer({ ...player, profilePictureUrl: allAvatars[avatarId].url });
   };
 
   return (

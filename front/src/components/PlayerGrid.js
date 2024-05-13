@@ -1,15 +1,15 @@
 import React from 'react';
 import PlayerCard from './PlayerCard';
-
+import { v4 as randomUUID } from 'uuid'; 
 const PlayerGrid = ({ players }) => {
     return (
         <div style={styles.grid}>
-            {players.map((player, index) => (
+            {players.map((player) => (
                 <PlayerCard 
-                key={index} 
-                avatar={player.avatar} 
+                key={player.playerId === undefined ? randomUUID() : player.playerId} 
+                avatar={player.profilePictureUrl} 
                 username={player.username} 
-                isGreyedOut={player.username === 'Joueur manquant'}
+                isGreyedOut={player.username === '...'}
                 />
             ))}
         </div>

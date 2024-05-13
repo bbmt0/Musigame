@@ -2,17 +2,18 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
-import { WelcomeScreen } from "./pages/welcomescreen/WelcomeScreen";
-import { GameHolderScreen } from "./pages/gamescreens/GameHolderScreen";
-import reportWebVitals from "./reportWebVitals";
 import GameCreationScreen from "./pages/gamecreationscreen/GameCreationScreen";
+import { GameHolderScreen } from "./pages/gamescreens/GameHolderScreen";
 import JoinGameScreen from "./pages/joingamescreen/JoinGameScreen";
+import { WelcomeScreen } from "./pages/welcomescreen/WelcomeScreen";
+import reportWebVitals from "./reportWebVitals";
 
 const router = createBrowserRouter([
   { path: "/", element: <WelcomeScreen /> },
   { path: "/game", element: <GameHolderScreen /> },
   { path: "/waiting", element: <GameCreationScreen /> },
   { path: "/join", element: <JoinGameScreen /> },
+  { path: "/game", element: <GameHolderScreen /> },
 ]);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
