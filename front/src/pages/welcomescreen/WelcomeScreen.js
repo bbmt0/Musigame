@@ -61,9 +61,19 @@ export const WelcomeScreen = () => {
     setCode(event.target.value);
   };
 
-  const handleJoinGame = () => {
-    navigate("/join", { state: { playerData: player } });
+   const handleJoinGame = () => {
+    axios
+      .put("http://localhost:8080/api/v1/rooms/" + code + "/join", player)
+      .then((response) => {
+        navigate("/waiting", {
+          state: { roomData: response.data, playerData: player },
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
+
 
   const handleAvatarChange = () => {
     if (avatarId + 1 === allAvatars.length) {
@@ -124,6 +134,7 @@ export const WelcomeScreen = () => {
         title={"Rejoindre une partie"}
         bgColor={colors.MG_TEAL}
         color={"black"}
+        disabled={code.length !== 5}
       ></AppButton>
     </div>
   );
