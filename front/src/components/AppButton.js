@@ -23,6 +23,7 @@ const AppButton = ({ title, bgColor, color, disabled, onClick }) => {
     return (
         <button
             style={styles}
+            disabled={disabled}
             onClick={onClick}
         >
          {title}
