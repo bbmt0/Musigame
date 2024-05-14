@@ -4,6 +4,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import "./index.css";
 import GameCreationScreen from "./pages/gamecreationscreen/GameCreationScreen";
 import { GameHolderScreen } from "./pages/gamescreens/GameHolderScreen";
+import {EndGameScreen} from "./pages/gamescreens/endscreens/EndGameScreen";
 import JoinGameScreen from "./pages/joingamescreen/JoinGameScreen";
 import { WelcomeScreen } from "./pages/welcomescreen/WelcomeScreen";
 import reportWebVitals from "./reportWebVitals";
@@ -14,6 +15,7 @@ const router = createBrowserRouter([
   { path: "/waiting", element: <GameCreationScreen /> },
   { path: "/join", element: <JoinGameScreen /> },
   { path: "/game", element: <GameHolderScreen /> },
+  { path: "/end-game", element: <EndGameScreen /> }
 ]);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
