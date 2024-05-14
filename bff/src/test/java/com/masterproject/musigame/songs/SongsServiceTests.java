@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import static com.masterproject.musigame.songs.SongMother.generateTitle;
 import static com.masterproject.musigame.songs.SongMother.songBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("unit")
 @Tag("service")
@@ -29,6 +30,12 @@ class SongsServiceTests {
         Song song = songBuilder(KNOWN_TITLE).build();
         var actual = service.findByKeyword(song.getTitle());
         assertThat(actual.get().getFirst().getTitle()).isEqualTo(song.getTitle());
+    }
+
+    @Test
+    @DisplayName("throw an exception when the keyword is null")
+    void throwExceptionWhenKeywordIsNull() {
+       assertThrows(IllegalArgumentException.class, () -> service.findByKeyword(null));
     }
 
 }

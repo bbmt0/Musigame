@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("integration")
 @Tag("db")
@@ -34,4 +35,11 @@ class FirebaseImagesRepositoryTests {
         assertThat(savedSongs.isPresent()).isTrue();
         assertThat(savedSongs.get().size()).isGreaterThan(0);
     }
+
+    @Test
+    @DisplayName("throws exception when id is null")
+    void throwsExceptionWhenIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> firebaseImagesRepository.findById(null));
+    }
+
 }

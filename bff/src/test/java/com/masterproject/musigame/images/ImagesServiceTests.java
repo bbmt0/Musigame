@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import static com.masterproject.musigame.images.ImageMother.Images.ids;
 import static com.masterproject.musigame.images.ImageMother.imageBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("unit")
 @Tag("service")
@@ -37,6 +38,19 @@ class ImagesServiceTests {
     void getAllImages() {
         var actual = service.findAll();
         assertThat(actual.get().size()).isGreaterThan(0);
+    }
+
+    @Test
+    @DisplayName("not get an image with unknown ImageId")
+    void notGetImageWithUnknownImageId() {
+        var actual = service.findById(ids().sample());
+        assertThat(actual).isEmpty();
+    }
+
+    @Test
+    @DisplayName("throw an exception when ImageId is null")
+    void throwExceptionWhenImageIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> service.findById(null));
     }
 
 
