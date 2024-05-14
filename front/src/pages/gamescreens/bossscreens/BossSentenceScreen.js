@@ -13,6 +13,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
   const clockLoading = require("../../../assets/gif/clock-loading.gif");
   const [sentence, setSentence] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [selectedSong, setSelectedSong] = useState(null);
   const [areAllSongsSubmitted, setAreAllSongsSubmitted] = useState(false);
   const [allSongs, setAllSongs] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(
@@ -29,16 +30,18 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
     setSentence(event.target.value);
   };
 
+  const handleSelectedSong = (song) => {
+    setSelectedSong(song);
+  };
+  const handleCancel = () => {
+    setSelectedSong(null);
+  };
+
   const handleSubmit = () => {
     if (sentence.length < 10) {
       setErrorMessage("⚠️ La phrase est trop courte 🤏");
       return;
-    }
-    if (sentence.length > 100) {
-      setErrorMessage("⚠️ La phrase est trop longue 🙌");
-      return;
-    }
-    else {
+    } else {
       axios
         .put(
           "http://localhost:8080/api/v1/rooms/" +
@@ -154,7 +157,34 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
           </p>
           <p style={styles.smallText}>Pour rappel, la sentence est :</p>
           <p style={styles.situationText}>{sentence}</p>
-          <MusicDisplayerGrid songsMapData={allSongs} onSongSelect={handleSelectWinningSong} />
+          {!selectedSong ?
+            <MusicDisplayerGrid songsMapData={allSongs} onSongSelect={handleSelectedSong} />
+            :
+              <>
+                <Spacer height={2} />
+                <MusicDisplayerCard
+                  musicArtistNames={selectedSong.artistNames}
+                  musicTitle={selectedSong.title}
+                  musicImageUrl={selectedSong.imageUrl}
+                />
+                <p style={styles.smallText}>
+                  Êtes-vous sûr de vouloir choisir cette musique ?{" "}
+                </p>
+                <div style={styles.confirmationBox}>
+                  <AppButton
+                    title="Annuler"
+                    onClick={handleCancel}
+                    bgColor="white"
+                  />
+                  <Spacer width={4} />
+                  <AppButton
+                    title="Confirmer"
+                    onClick={handleSelectWinningSong}
+                    bgColor={colors.MG_TEAL}
+                  />
+                </div>
+              </>
+          }
         </>
       )}
     </div>
