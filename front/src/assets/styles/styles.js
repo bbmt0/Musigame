@@ -30,6 +30,7 @@ const styles = {
         backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         height: '100vh',
+        overflow: 'hidden',
     },
     links: {
         color: 'white', 
