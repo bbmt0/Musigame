@@ -1,4 +1,4 @@
-package com.masterproject.musigame.adapter.db.rooms;
+package com.masterproject.musigame.adapter.db.images;
 
 import com.masterproject.musigame.adapter.db.images.FirebaseImagesRepository;
 import com.masterproject.musigame.images.ImageId;
