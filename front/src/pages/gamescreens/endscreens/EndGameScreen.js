@@ -10,7 +10,7 @@ export const EndGameScreen = () => {
   const players = roomData.players;
 
   const sortedPlayers = players.sort((a, b) => b.score - a.score);
-  
+
   console.log(roomData);
 
   return (
@@ -33,7 +33,6 @@ export const EndGameScreen = () => {
                   <PlayerCard
                     username={player.username}
                     avatar={player.profilePictureUrl}
-                    score={player.score}
                   />
                 </td>
                 {player.score !== null && player.score !== undefined && (
