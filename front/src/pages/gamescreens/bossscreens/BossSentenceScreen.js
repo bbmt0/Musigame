@@ -33,7 +33,12 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
     if (sentence.length < 10) {
       setErrorMessage("⚠️ La phrase est trop courte 🤏");
       return;
-    } else {
+    }
+    if (sentence.length > 100) {
+      setErrorMessage("⚠️ La phrase est trop longue 🙌");
+      return;
+    }
+    else {
       axios
         .put(
           "http://localhost:8080/api/v1/rooms/" +

@@ -1,4 +1,3 @@
-import backgroundImage from '../images/background.png';
 import colors from './colors';
 const styles = {
     h1: {
@@ -27,10 +26,8 @@ const styles = {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         height: '100vh',
-        overflow: 'hidden',
     },
     links: {
         color: 'white', 
