@@ -54,7 +54,25 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
     }
   };
 
-  //TODO submit winner song
+  const handleSelectWinningSong = (songPlayerId) => {
+    axios
+      .put(
+        "http://localhost:8080/api/v1/rooms/" +
+          roomData.roomId.value +
+          "/select-song",
+        null,
+        {
+          params: {
+            currentBossId: playerData.playerId,
+            playerId: songPlayerId,
+            roundId: roomData.currentRound,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+      });
+  };
 
   const roundText =
     roomData.currentRound === 1
@@ -74,7 +92,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
       setAllSongs(roomData.rounds[roomData.currentRound - 1].songSuggestions);
     }
   }, [roomData]);
-  console.log(allSongs);
+
   return (
     <div style={styles.container}>
       <GoBackButton
@@ -131,7 +149,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
           </p>
           <p style={styles.smallText}>Pour rappel, la sentence est :</p>
           <p style={styles.situationText}>{sentence}</p>
-          <MusicDisplayerGrid songsMapData={allSongs} onSongSelect={() => {}} />
+          <MusicDisplayerGrid songsMapData={allSongs} onSongSelect={handleSelectWinningSong} />
         </>
       )}
     </div>

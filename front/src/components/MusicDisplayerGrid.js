@@ -24,19 +24,17 @@ function MusicDisplayerGrid({ songsData, songsMapData, onSongSelect }) {
             />
           ))}
       {songsMapData &&
-        songsMapData
-          .slice(0, 5)
-          .map((songMap) =>
-            Object.values(songMap).map((song) => (
-              <MusicDisplayerCard
-                key={song.songId.value}
-                musicArtistNames={song.artistNames}
-                musicTitle={song.title}
-                musicImageUrl={song.imageUrl}
-                onPress={() => onSongSelect(song)}
-              />
-            ))
-          )}
+        songsMapData.slice(0, 5).map((songMap) =>
+          Object.entries(songMap).map(([key, song]) => (
+            <MusicDisplayerCard
+              key={key}
+              musicArtistNames={song.artistNames}
+              musicTitle={song.title}
+              musicImageUrl={song.imageUrl}
+              onPress={() => onSongSelect(key)}
+            />
+          ))
+        )}
     </div>
   );
 }
