@@ -22,7 +22,6 @@ export const PlayerScreenStyles = {
     },
     situationText : {
         margin: '2vh',
-       // marginBottom: '1vh',
         fontSize: '1.5em',
         color: colors.MG_TEAL,
     }, 
