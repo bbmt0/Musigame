@@ -28,6 +28,7 @@ public class RoomsController {
     private static final String ROOM_FULL = "Room is full";
     private static final String ROUND_IS_NOT_CURRENT = "Round is not current";
     private static final String WINNING_SONG_ALREADY_SELECTED = "Winning song already selected";
+    private static final String GAME_ALREADY_FINISHED = "Game already finished";
 
 
     @GetMapping("/{roomId}")
@@ -146,6 +147,27 @@ public class RoomsController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(WINNING_SONG_ALREADY_SELECTED);
         }
         var updatedRoom = service.selectSong(room.get(), roundId, playerId);
+        if (updatedRoom.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping("/{roomId}/start-next-round")
+    public ResponseEntity<Object> startNextRound(@PathVariable String roomId, @RequestParam String nextBossId) {
+        var room = retrieveRoom(roomId);
+        if (room.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
+        }
+        if (room.get().getCurrentRound()==3) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(GAME_ALREADY_FINISHED);
+        }
+        var nextBoss = room.get().getRounds().get(room.get().getCurrentRound()).getCurrentBoss();
+        if (!nextBoss.getPlayerId().equals(nextBossId)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(NOT_CURRENT_BOSS);
+        }
+        var updatedRoom = service.startNextRound(room.get());
         if (updatedRoom.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
         } else {

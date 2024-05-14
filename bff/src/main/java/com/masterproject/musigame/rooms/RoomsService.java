@@ -79,7 +79,6 @@ public class RoomsService {
                 .orElseThrow();
         if (roundId < 3) {
             room.getRounds().get(roundId).setCurrentBoss(nextBoss);
-            room.setCurrentRound(roundId + 1);
         }
         return Optional.of(repository.save(room));
     }
@@ -88,6 +87,12 @@ public class RoomsService {
     public Optional<Room> join(@NonNull Room room, @NonNull Player player) {
         player.setScore(0);
         room.getPlayers().add(player);
+        return Optional.of(repository.save(room));
+    }
+
+    @Nonnull
+    public Optional<Room> startNextRound(@NonNull Room room) {
+        room.setCurrentRound(room.getCurrentRound() + 1);
         return Optional.of(repository.save(room));
     }
 

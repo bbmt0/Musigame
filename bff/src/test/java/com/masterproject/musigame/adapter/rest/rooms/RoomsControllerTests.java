@@ -555,6 +555,124 @@ class RoomsControllerTests {
                 .andExpect(content().string("Round is not current"));
     }
 
+    @Test
+    @DisplayName("start next round successfully")
+    void startNextRoundSuccessfully() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+        Song song = SongMother.songBuilder().build();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+        mockRoom.setCurrentRound(1);
+        mockRoom.getRounds().getFirst().setWinningSong(Collections.singletonMap(player.getPlayerId(), song));
+        mockRoom.getRounds().get(1).setCurrentBoss(player);
+
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        var updatedRoom = Room.builder()
+                .game(mockRoom.getGame())
+                .creator(mockRoom.getCreator())
+                .roomId(mockRoom.getRoomId())
+                .players(mockRoom.getPlayers())
+                .rounds(mockRoom.getRounds())
+                .build();
+
+        updatedRoom.setCurrentRound(2);
+
+        when(service.startNextRound(any(Room.class))).thenReturn(Optional.of(updatedRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start-next-round", ROOM_ID.getValue())
+                        .param("nextBossId", player.getPlayerId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
+                .andExpect(jsonPath("$.currentRound").value(2))
+                .andExpect(jsonPath("$.rounds[1].currentBoss.playerId").value(player.getPlayerId()));
+    }
+
+    @Test
+    @DisplayName("start next round with unknown room id")
+    void startNextRoundWithUnknownRoomId() throws Exception {
+        Player player = RoomMother.generatePlayer();
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start-next-round", ROOM_ID.getValue())
+                        .param("nextBossId", player.getPlayerId()))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("start next round with game already finished")
+    void startNextRoundWithGameAlreadyFinished() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+        mockRoom.setCurrentRound(3);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start-next-round", ROOM_ID.getValue())
+                        .param("nextBossId", player.getPlayerId()))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Game already finished"));
+    }
+
+    @Test
+    @DisplayName("start next round with wrong next boss id")
+    void startNextRoundWithWrongNextBossId() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+        mockRoom.setCurrentRound(1);
+        mockRoom.getRounds().getFirst().setWinningSong(Collections.singletonMap(player.getPlayerId(), SongMother.songBuilder().build()));
+        mockRoom.getRounds().get(1).setCurrentBoss(player);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start-next-round", ROOM_ID.getValue())
+                        .param("nextBossId", creator.getPlayerId()))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Player is not the current boss"));
+    }
+
+    @Test
+    @DisplayName("start next round with bad request")
+    void startNextRoundWithBadRequest() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        Player player = RoomMother.generatePlayer();
+
+        var players = new ArrayList<>(mockRoom.getPlayers());
+        players.add(player);
+        mockRoom.setPlayers(players);
+
+        mockRoom.setCurrentRound(1);
+        mockRoom.getRounds().getFirst().setWinningSong(Collections.singletonMap(player.getPlayerId(), SongMother.songBuilder().build()));
+        mockRoom.getRounds().get(1).setCurrentBoss(player);
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+        when(service.startNextRound(mockRoom)).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start-next-round", ROOM_ID.getValue())
+                        .param("nextBossId", player.getPlayerId()))
+                .andExpect(status().isBadRequest());
+    }
+
 
     static Room generateARoomFullOfPlayers() {
         Creator creator = generateCreator();
