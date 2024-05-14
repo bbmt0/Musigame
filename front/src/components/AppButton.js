@@ -12,7 +12,7 @@ const AppButton = ({ title, bgColor, color, disabled, onClick }) => {
         height: '2em',
         width: '12em',
         fontSize: '1.1em',
-        marginTop: '1.5em',
+        marginTop: '0.5em',
         fontFamily: 'Nova Square',
         backgroundColor: bgColor,
         color: color, 
