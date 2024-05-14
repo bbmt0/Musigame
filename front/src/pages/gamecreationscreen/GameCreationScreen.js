@@ -1,6 +1,6 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+// import { useLocation, useNavigate } from "react-router-dom";
 import colors from "../../assets/styles/colors";
 import AppButton from "../../components/AppButton";
 import GameTypeGrid from "../../components/GameTypeGrid";
@@ -19,6 +19,7 @@ const GameCreationScreen = () => {
   const [selectedGameType, setSelectedGameType] = useState(allGameTypes[0]);
   const [missingPlayers, setMissingPlayers] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isCodeCopied, setIsCodeCopied] = useState(false);
 
   const launchGame = () => {
     console.log("Launching game...");
@@ -40,6 +41,14 @@ const GameCreationScreen = () => {
         console.error(error);
       });
   };
+
+  const copyToClipboard = useCallback(()=> {
+    navigator.clipboard.writeText(roomData.roomId.value);
+    setIsCodeCopied(true);
+    setTimeout(() => {
+      setIsCodeCopied(false);
+    }, 2500)
+  }, [])
 
   useEffect(() => {
     const defaultPlayer = {
@@ -82,13 +91,17 @@ const GameCreationScreen = () => {
 
   return (
     <div style={GameCreationScreenStyles.container}>
-      <GoBackButton
+      { <GoBackButton
         style={GameCreationScreenStyles.backButton}
         title="Retour à l'accueil"
         bgColor="black"
         color="white"
-      />
+      /> }
       <h4 style={GameCreationScreenStyles.h4}>Dans le salon</h4>
+      <div style={GameCreationScreenStyles.code}>
+        <p style={GameCreationScreenStyles.codeText}>Code de la partie :</p>
+        <p style={GameCreationScreenStyles.greenCodeText}>{roomData.roomId.value}</p>
+      </div>
       <PlayerGrid players={players} />
       <p style={GameCreationScreenStyles.smallText}>
         {isGameStarted
@@ -108,7 +121,7 @@ const GameCreationScreen = () => {
           <AppButton
             title="Inviter des amis"
             bgColor={colors.MG_TEAL}
-            onClick={() => {}}
+            onClick={copyToClipboard}
           />
           {isCreator && (
             <AppButton
@@ -119,7 +132,13 @@ const GameCreationScreen = () => {
             />
           )}
         </div>
+        
       )}
+      {isCodeCopied && (
+        <>
+          <p style={GameCreationScreenStyles.codeCopiedText}>📋 Code copié dans le presse-papiers !</p>
+        </>
+          )}
     </div>
   );
 };
