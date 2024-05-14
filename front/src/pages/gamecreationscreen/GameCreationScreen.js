@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useCallback, useEffect, useState } from "react";
-// import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import colors from "../../assets/styles/colors";
 import AppButton from "../../components/AppButton";
 import GameTypeGrid from "../../components/GameTypeGrid";
