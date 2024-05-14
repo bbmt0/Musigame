@@ -77,14 +77,13 @@ export const PlayerScreen = ({ playerData, roomData }) => {
         )
     );
     if (isSongSubmitted) {
-      roomData.rounds[roomData.currentRound - 1].songSuggestions &&
-        roomData.rounds[roomData.currentRound - 1].songSuggestions.forEach(
-          (songMap) => {
-            if (songMap.hasOwnProperty(playerData.playerId)) {
-              setSelectedSong(songMap[playerData.playerId]);
-            }
+      roomData.rounds[roomData.currentRound - 1].songSuggestions.forEach(
+        (songMap) => {
+          if (songMap.hasOwnProperty(playerData.playerId)) {
+            setSelectedSong(songMap[playerData.playerId]);
           }
-        );
+        }
+      );
     }
   }, [roomData]);
   const roundText =
