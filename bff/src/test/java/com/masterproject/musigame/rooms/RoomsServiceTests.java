@@ -130,6 +130,20 @@ class RoomsServiceTests {
         assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
     }
 
+    @Test
+    @DisplayName("start next round")
+    void startNextRound() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        room.getRounds().getFirst().setCurrentBoss(creator);
+        room.getRounds().getFirst().setWinningSong(Map.of(creator.getPlayerId(), songBuilder().build()));
+
+        var actual = service.startNextRound(room);
+        room.getRounds().get(1).setCurrentBoss(creator);
+
+        assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
+    }
+
 
     static Stream<Arguments> gameTypeProvider() {
         return Stream.of(
