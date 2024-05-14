@@ -6,7 +6,18 @@ function MusicDisplayerCard({
   musicTitle,
   musicImageUrl,
   onPress,
-}) {
+}) 
+{
+
+  const truncatedTitle = musicTitle.length > 20
+  ? `${musicTitle.substring(0, 23)}.`
+  : musicTitle;
+
+  const truncatedArtistNames = musicArtistNames.length > 30
+  ? `${musicArtistNames.substring(0, 30)}.`
+  : musicArtistNames;
+
+
   return (
     <div onClick={onPress} style={styles.musicSearchResultDisplay}>
       {musicImageUrl && (
@@ -17,8 +28,8 @@ function MusicDisplayerCard({
         />
       )}
       <div style={styles.musicTextBlock}>
-        <p style={styles.musicTitle}>{musicTitle}</p>
-        <p style={styles.musicArtist}>{musicArtistNames}</p>
+        <p style={styles.musicTitle}>{truncatedTitle}</p>
+        <p style={styles.musicArtist}>{truncatedArtistNames}</p>
       </div>
     </div>
   );
@@ -30,6 +41,7 @@ const styles = {
     flexDirection: "row",
     alignItems: "center",
     maxHeight: "100%",
+    maxWidth: "100%",
   },
   musicMiniature: {
     width: "4em",
