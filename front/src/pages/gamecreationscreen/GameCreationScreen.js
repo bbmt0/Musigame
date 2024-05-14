@@ -75,7 +75,7 @@ const GameCreationScreen = () => {
           .catch((error) => {
             console.error(error);
           });
-      }, 5000);
+      }, 1000);
       return () => clearInterval(interval);
     }
   }, [roomData]);

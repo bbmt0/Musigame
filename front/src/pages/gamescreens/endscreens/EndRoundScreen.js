@@ -1,43 +1,89 @@
-import React from 'react';
-import PlayerCard from '../../../components/PlayerCard';
-import AppButton from '../../../components/AppButton';
-import GoBackButton from '../../../components/GoBackButton';
-import Spacer from '../../../components/Spacer';
-import { EndScreenStyles as styles } from './EndScreenStyles';
-import colors from '../../../assets/styles/colors';
+import React from "react";
+import PlayerCard from "../../../components/PlayerCard";
+import AppButton from "../../../components/AppButton";
+import GoBackButton from "../../../components/GoBackButton";
+import Spacer from "../../../components/Spacer";
+import { EndScreenStyles as styles } from "./EndScreenStyles";
+import colors from "../../../assets/styles/colors";
+import axios from "axios";
 
-const EndRoundScreen = ({ roundNumber, player, winner, situation, isPlayerWinner, musicChoice }) => {
-    const clockLoading = require('../../../assets/gif/clock-loading.gif');
-    const handleGoBack = () => {
-    };
+const EndRoundScreen = ({ playerData, roomData }) => {
+  const clockLoading = require("../../../assets/gif/clock-loading.gif");
+  console.log(roomData);
 
-    const handleNewRound = () => {
-    };
+  const handleNewRound = () => {
+    axios
+      .put(
+        "http://localhost:8080/api/v1/rooms/" +
+          roomData.roomId.value +
+          "/start-next-round",
+        null,
+        {
+          params: {
+            nextBossId: playerData.playerId,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+      });
+  };
 
-    return (
-        <div style={styles.container}>
-            <GoBackButton style={styles.backButton} title="Quitter la partie" bgColor='black' color='white' />
-            <h4 style={styles.h4}>{roundNumber}{roundNumber === 1 ? 'er' : 'ème'} tour</h4>
-            <PlayerCard username={player.username} avatar={player.avatar} />
-            {isPlayerWinner ? (
-                <>
-                    <p style={styles.smallText}>Bien joué tu as gagné ce tour, tu deviens le nouveau boss !</p>
-                    <AppButton
-                        title='Prochain round'
-                        bgColor={colors.MG_TEAL}
-                        onClick={handleNewRound} />
-                </>
-            ) : (
-                <>
-                    <p style={styles.smallText}> Le gagnant est {winner.username} pour "{situation}"</p>
-                    <p style={styles.smallText}> Il a proposé la musique {musicChoice.title} de {musicChoice.artist}</p>
-                    <Spacer height={5}/>
-                    <p style={styles.waitingText}> En attente du nouveau boss...</p>
-                    <img style={styles.gif} src={clockLoading} />
-                </>
-            )}
-        </div>
-    );
+  const roundText =
+    roomData.currentRound === 1
+      ? "1er tour"
+      : `${roomData.currentRound}ème tour`;
+
+  const winningSongMap = roomData.rounds[roomData.currentRound - 1].winningSong;
+  const isPlayerWinner = winningSongMap[playerData.playerId] !== undefined;
+  const winner = roomData.rounds[roomData.currentRound].currentBoss;
+  const sentence = roomData.rounds[roomData.currentRound - 1].sentence;
+  
+  console.log(winner);
+
+  return (
+    <div style={styles.container}>
+      <GoBackButton
+        style={styles.backButton}
+        title="Quitter la partie"
+        bgColor="black"
+        color="white"
+      />
+      <h4 style={styles.h4}>{roundText}</h4>
+      <PlayerCard
+        username={playerData.username}
+        avatar={playerData.profilePictureUrl}
+      />
+      {isPlayerWinner ? (
+        <>
+          <p style={styles.smallText}>
+            Bien joué tu as gagné ce tour, tu deviens le nouveau boss !
+          </p>
+          <AppButton
+            title="Prochain round"
+            bgColor={colors.MG_TEAL}
+            onClick={handleNewRound}
+          />
+        </>
+      ) : (
+        <>
+          <p style={styles.smallText}>
+            {" "}
+            Le gagnant est {winner.username} pour "{sentence}"
+          </p>
+          <p style={styles.smallText}>
+            {" "}
+            Il a proposé la musique {
+              winningSongMap[winner.playerId].title
+            } de {winningSongMap[winner.playerId].title}
+          </p>
+          <Spacer height={5} />
+          <p style={styles.waitingText}> En attente du nouveau boss...</p>
+          <img style={styles.gif} src={clockLoading} />
+        </>
+      )}
+    </div>
+  );
 };
 
 export default EndRoundScreen;
