@@ -120,6 +120,7 @@ export const WelcomeScreen = () => {
         title={"Créer une partie"}
         bgColor={colors.MG_TEAL}
         color={"black"}
+        disabled={pseudo.length <= 3}
       ></AppButton>
       <Spacer height={2}/>
       <InputTextBox
