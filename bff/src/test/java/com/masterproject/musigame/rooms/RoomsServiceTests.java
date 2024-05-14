@@ -18,6 +18,7 @@ import static com.masterproject.musigame.rooms.RoomMother.Rooms.ids;
 import static com.masterproject.musigame.rooms.RoomMother.*;
 import static com.masterproject.musigame.songs.SongMother.songBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("unit")
 @Tag("service")
@@ -42,6 +43,12 @@ class RoomsServiceTests {
     }
 
     @Test
+    @DisplayName("throws exception when room is null while saving")
+    void throwExceptionWhenRoomIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> service.save(null));
+    }
+
+    @Test
     @DisplayName("get a room with known RoomId")
     void getRoomWithKnownRoomId() {
         Creator creator = generateCreator();
@@ -49,6 +56,12 @@ class RoomsServiceTests {
 
         var actual = service.findById(expected.getRoomId());
         assertThat(actual).contains(expected);
+    }
+
+    @Test
+    @DisplayName("throws exception when RoomId is null while getting room")
+    void throwExceptionWhenRoomIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> service.findById(null));
     }
 
     @Test
@@ -73,6 +86,13 @@ class RoomsServiceTests {
         assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
     }
 
+
+    @Test
+    @DisplayName("throws exception when room is null while starting game")
+    void throwExceptionWhenRoomIsNullWhileStartingGame() {
+        assertThrows(IllegalArgumentException.class, () -> service.startGame(null, GameType.BOSS_SELECTION));
+    }
+
     @Test
     @DisplayName("submit a sentence")
     void submitSentence() {
@@ -83,6 +103,30 @@ class RoomsServiceTests {
 
         var actual = service.submitSentence(room, 1, "sentence");
         assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
+    }
+
+    @Test
+    @DisplayName("throws exception when sentence is null while submitting sentence")
+    void throwExceptionWhenSentenceIsNull() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+
+        assertThrows(IllegalArgumentException.class, () -> service.submitSentence(room, 1, null));
+    }
+
+    @Test
+    @DisplayName("throws exception when room is null while submitting sentence")
+    void throwExceptionWhenRoomIsNullWhileSubmittingSentence() {
+        assertThrows(IllegalArgumentException.class, () -> service.submitSentence(null, 1, "sentence"));
+    }
+
+    @Test
+    @DisplayName("throws exception when round number null while submitting sentence")
+    void throwExceptionWhenRoundNumberIsNullWhileSubmittingSentence() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+
+        assertThrows(IllegalArgumentException.class, () -> service.submitSentence(room, null, "sentence"));
     }
 
     @Test
@@ -97,6 +141,23 @@ class RoomsServiceTests {
     }
 
     @Test
+    @DisplayName("throws exception when player is null while joining room")
+    void throwExceptionWhenPlayerIsNullWhileJoiningRoom() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+
+        assertThrows(IllegalArgumentException.class, () -> service.join(room, null));
+    }
+
+    @Test
+    @DisplayName("throws exception when room is null while joining room")
+    void throwExceptionWhenRoomIsNullWhileJoiningRoom() {
+        Player player = generatePlayer();
+
+        assertThrows(IllegalArgumentException.class, () -> service.join(null, player));
+    }
+
+    @Test
     @DisplayName("submit a song")
     void submitSong() {
         Creator creator = generateCreator();
@@ -108,6 +169,38 @@ class RoomsServiceTests {
         var actual = service.submitSong(room, 1, player.getPlayerId(), song);
         assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
     }
+
+    @Test
+    @DisplayName("throws exception when song is null while submitting song")
+    void throwExceptionWhenSongIsNullWhileSubmittingSong() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        Player player = generatePlayer();
+
+        assertThrows(IllegalArgumentException.class, () -> service.submitSong(room, 1, player.getPlayerId(), null));
+    }
+
+    @Test
+    @DisplayName("throws exception when player is null while submitting song")
+    void throwExceptionWhenPlayerIsNullWhileSubmittingSong() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        Song song = songBuilder().build();
+
+        assertThrows(IllegalArgumentException.class, () -> service.submitSong(room, 1, null, song));
+    }
+
+    @Test
+    @DisplayName("throws exception when round number is null while submitting song")
+    void throwExceptionWhenRoundNumberIsNullWhileSubmittingSong() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        Song song = songBuilder().build();
+        Player player = generatePlayer();
+
+        assertThrows(IllegalArgumentException.class, () -> service.submitSong(room, null, player.getPlayerId(), song));
+    }
+
 
     @Test
     @DisplayName("select a song")
@@ -131,6 +224,33 @@ class RoomsServiceTests {
     }
 
     @Test
+    @DisplayName("throws exception when player is null while selecting song")
+    void throwExceptionWhenPlayerIsNullWhileSelectingSong() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+
+        assertThrows(IllegalArgumentException.class, () -> service.selectSong(room, 1, null));
+    }
+
+    @Test
+    @DisplayName("throws exception when round number is null while selecting song")
+    void throwExceptionWhenRoundNumberIsNullWhileSelectingSong() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        Player player = generatePlayer();
+
+        assertThrows(IllegalArgumentException.class, () -> service.selectSong(room, null, player.getPlayerId()));
+    }
+
+    @Test
+    @DisplayName("throws exception when room is null while selecting song")
+    void throwExceptionWhenRoomIsNullWhileSelectingSong() {
+        Player player = generatePlayer();
+
+        assertThrows(IllegalArgumentException.class, () -> service.selectSong(null, 1, player.getPlayerId()));
+    }
+
+    @Test
     @DisplayName("start next round")
     void startNextRound() {
         Creator creator = generateCreator();
@@ -142,6 +262,12 @@ class RoomsServiceTests {
         room.getRounds().get(1).setCurrentBoss(creator);
 
         assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
+    }
+
+    @Test
+    @DisplayName("throws exception when room is null while starting next round")
+    void throwExceptionWhenRoomIsNullWhileStartingNextRound() {
+        assertThrows(IllegalArgumentException.class, () -> service.startNextRound(null));
     }
 
 

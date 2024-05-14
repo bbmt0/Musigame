@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static com.masterproject.musigame.rooms.RoomMother.roomBuilder;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("integration")
 @Tag("db")
@@ -33,6 +34,12 @@ class FirebaseRoomsRepositoryTests {
     }
 
     @Test
+    @DisplayName("throws exception when room is null while saving")
+    void throwExceptionWhenRoomIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> firebaseRoomsRepository.save(null));
+    }
+
+    @Test
     @DisplayName("delete a room")
     void deleteRoom() throws InterruptedException {
         Room room = roomBuilder().build();
@@ -51,6 +58,12 @@ class FirebaseRoomsRepositoryTests {
     }
 
     @Test
+    @DisplayName("throws exception when room id is null while deleting")
+    void throwExceptionWhenRoomIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> firebaseRoomsRepository.delete(null));
+    }
+
+    @Test
     @DisplayName("find a room by id")
     void findRoomById() throws InterruptedException {
         Room room = roomBuilder().build();
@@ -66,6 +79,12 @@ class FirebaseRoomsRepositoryTests {
 
         firebaseRoomsRepository.delete(room.getRoomId());
         firebaseRoomsRepository.delete(room2.getRoomId());
+    }
+
+    @Test
+    @DisplayName("throws exception when id is null while finding")
+    void throwsExceptionWhenIdIsNull() {
+        assertThrows(IllegalArgumentException.class, () -> firebaseRoomsRepository.findById(null));
     }
 
     @Test
