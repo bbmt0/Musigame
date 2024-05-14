@@ -1,18 +1,21 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import colors from "../../../assets/styles/colors";
 import AppButton from "../../../components/AppButton";
 import GoBackButton from "../../../components/GoBackButton";
 import InputTextBox from "../../../components/InputTextBox";
+import MusicDisplayerCard from "../../../components/MusicDisplayerCard";
 import MusicDisplayerGrid from "../../../components/MusicDisplayerGrid";
 import PlayerCard from "../../../components/PlayerCard";
+import Spacer from "../../../components/Spacer";
 import { BossScreenStyles as styles } from "./BossScreenStyles";
-import { useEffect } from "react";
 
 export const BossSentenceScreen = ({ playerData, roomData }) => {
   const clockLoading = require("../../../assets/gif/clock-loading.gif");
   const [sentence, setSentence] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [selectedSong, setSelectedSong] = useState(null);
+  const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [areAllSongsSubmitted, setAreAllSongsSubmitted] = useState(false);
   const [allSongs, setAllSongs] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(
@@ -29,16 +32,20 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
     setSentence(event.target.value);
   };
 
+  const handleSelectedSong = (key, song) => {
+    setSelectedSong(song);
+    setSelectedPlayer(key);
+  };
+  const handleCancel = () => {
+    setSelectedSong(null);
+    setSelectedPlayer(null);
+  };
+
   const handleSubmit = () => {
     if (sentence.length < 10) {
       setErrorMessage("⚠️ La phrase est trop courte 🤏");
       return;
-    }
-    if (sentence.length > 100) {
-      setErrorMessage("⚠️ La phrase est trop longue 🙌");
-      return;
-    }
-    else {
+    } else {
       axios
         .put(
           "http://localhost:8080/api/v1/rooms/" +
@@ -59,7 +66,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
     }
   };
 
-  const handleSelectWinningSong = (songPlayerId) => {
+  const handleSelectWinningSong = () => {
     axios
       .put(
         "http://localhost:8080/api/v1/rooms/" +
@@ -69,7 +76,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
         {
           params: {
             currentBossId: playerData.playerId,
-            playerId: songPlayerId,
+            playerId: selectedPlayer  ,
             roundId: roomData.currentRound,
           },
         }
@@ -154,7 +161,37 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
           </p>
           <p style={styles.smallText}>Pour rappel, la sentence est :</p>
           <p style={styles.situationText}>{sentence}</p>
-          <MusicDisplayerGrid songsMapData={allSongs} onSongSelect={handleSelectWinningSong} />
+          {!selectedSong ? (
+            <MusicDisplayerGrid
+              songsMapData={allSongs}
+              onSongSelect={handleSelectedSong}
+            />
+          ) : (
+            <>
+              <Spacer height={2} />
+              <MusicDisplayerCard
+                musicArtistNames={selectedSong.artistNames}
+                musicTitle={selectedSong.title}
+                musicImageUrl={selectedSong.imageUrl}
+              />
+              <p style={styles.smallText}>
+                Êtes-vous sûr de vouloir choisir cette musique ?{" "}
+              </p>
+              <div style={styles.confirmationBox}>
+                <AppButton
+                  title="Annuler"
+                  onClick={handleCancel}
+                  bgColor="white"
+                />
+                <Spacer width={4} />
+                <AppButton
+                  title="Confirmer"
+                  onClick={handleSelectWinningSong}
+                  bgColor={colors.MG_TEAL}
+                />
+              </div>
+            </>
+          )}
         </>
       )}
     </div>

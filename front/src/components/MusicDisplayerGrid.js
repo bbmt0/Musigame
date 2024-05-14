@@ -14,6 +14,7 @@ function MusicDisplayerGrid({ songsData, songsMapData, onSongSelect }) {
       width: "60%"
     },
   };
+
   return (
     <div style={styles.musicGrid}>
       {songsData &&
@@ -36,7 +37,7 @@ function MusicDisplayerGrid({ songsData, songsMapData, onSongSelect }) {
               musicArtistNames={song.artistNames}
               musicTitle={song.title}
               musicImageUrl={song.imageUrl}
-              onPress={() => onSongSelect(key)}
+              onPress={() => onSongSelect(key, song)}
             />
           ))
         )}
