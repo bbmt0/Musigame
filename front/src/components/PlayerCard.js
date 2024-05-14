@@ -6,7 +6,7 @@ const PlayerCard = ({ avatar, username, isGreyedOut, score }) => {
     const trimmedUsername = username.length > 12 ? username.substring(0, 12) + '.' : username;
     const styles = {
         avatar: {
-            width: '2em',
+            width: '5em',
             filter: isGreyedOut ? 'grayscale(100%)' : 'none',
         },
         playerCard: {
@@ -14,7 +14,7 @@ const PlayerCard = ({ avatar, username, isGreyedOut, score }) => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '70%',
+            fontSize: '85%',
             color: 'white',
 
         },
