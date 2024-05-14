@@ -74,7 +74,7 @@ public class RoomsService {
         player.setScore(player.getScore() + 1);
 
         var nextBoss = room.getPlayers().stream()
-                .filter(p -> !p.getPlayerId().equals(playerId))
+                .filter(p -> p.getPlayerId().equals(playerId))
                 .findFirst()
                 .orElseThrow();
         if (roundId < 3) {
