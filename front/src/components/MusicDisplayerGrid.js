@@ -4,9 +4,14 @@ import MusicDisplayerCard from "./MusicDisplayerCard";
 function MusicDisplayerGrid({ songsData, songsMapData, onSongSelect }) {
   const styles = {
     musicGrid: {
+      display: "flex", 
+      flexDirection: "column", 
+      alignItems: "flex-start",
+      gap: "0.5em",
       marginTop: "0.8em",
       marginBottom: 0,
       maxHeight: "100%",
+      width: "60%"
     },
   };
   return (
