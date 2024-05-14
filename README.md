@@ -9,14 +9,24 @@
 ### Description
 //TODO faire description projet 
 
+### Presentation
+Vous pouvez retrouver une vidéo de présentation du projet sur [Youtube](
+https://youtu.be/VjRyPywA1zI).
+Dans cette vidéo est illustrée une partie entre deux joueurs, bien que le jeu se veut être joué à minimum 3 joueurs.
+
 ### Mono-repo
 Ce repository est un mono-repo, il contient plusieurs projets :
 - Musigame front : Application web en React
 - Musigame bff : API en Spring Boot
 
+### Technologies
+- Front : React
+- BFF : Spring Boot (Java 21)
+
 ### Installation
 Pour installer le projet, il suffit de cloner le repository avec la commande suivante :
-```shell git clone https://github.com/bbmt0/Musigame.git
+```shell 
+git clone https://github.com/bbmt0/Musigame.git
 ```
 Ensuite, veuillez suivre les instructions d'installation des projets front et bff situées dans leur README respectif.
 front : [README.md](./front/README.md)
