@@ -32,6 +32,9 @@ Ensuite, veuillez suivre les instructions d'installation des projets front et bf
 front : [README.md](./front/README.md)
 bff : [README.md](./bff/README.md)
 
+### Lancement
+Pour lancer le projet, il suffit de suivre les instructions de lancement des projets front et bff situées dans leur README respectif. L'application sera accessible à l'adresse suivante : http://localhost:3000.
+
 
 ### Documentation
 Nous avons mis en place des ADR pour documenter les choix d'architecture du projet. Vous pouvez les retrouver dans le dossier [docs/adr](./doc/architecture/decisions/)
