@@ -10,4 +10,5 @@ Pour lancer le projet, assurez-vous d'avoir Java 21 installé sur votre machine 
 ```shell
 cd bff
 gradle build
+./gradlew run
 ```
