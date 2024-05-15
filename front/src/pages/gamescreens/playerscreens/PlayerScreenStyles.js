@@ -21,7 +21,8 @@ export const PlayerScreenStyles = {
         marginTop: '5vh'
     },
     situationText : {
-        margin: '2vh',
+        marginLeft: '10vw',
+        marginRight: '10vw',
         fontSize: '1.5em',
         color: colors.MG_TEAL,
     }, 
