@@ -7,7 +7,7 @@
 
 
 ### Description
-//TODO faire description projet 
+Musigame est un jeu multijoueur sous forme de Progressive Web Application (PWA). Ce jeu se base sur l'univers de la musique et à l'heure actuelle un mode de jeu est disponible. Ce concept innovant vise à créer une atmosphère divertissante et interactive autour de la musique. Le développement de l'application repose sur l'utilisation de React pour le frontend, permettant une interface utilisateur modulaire et réactive, ainsi que sur Spring Boot (Java 21) pour le Backend For Frontend, assurant la gestion efficace des fonctionnalités côté serveur.
 
 ### Presentation
 Vous pouvez retrouver une vidéo de présentation du projet sur [Youtube](
