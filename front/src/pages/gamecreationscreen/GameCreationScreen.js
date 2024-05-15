@@ -8,6 +8,8 @@ import GoBackButton from "../../components/GoBackButton";
 import PlayerGrid from "../../components/PlayerGrid";
 import { allGameTypes } from "../../utils/gametype";
 import GameCreationScreenStyles from "./GameCreationScreenStyles";
+import { handleErrorMsg } from "../../utils/errormessage";
+
 
 const GameCreationScreen = () => {
   const location = useLocation();
@@ -20,6 +22,7 @@ const GameCreationScreen = () => {
   const [missingPlayers, setMissingPlayers] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isCodeCopied, setIsCodeCopied] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const launchGame = () => {
     console.log("Launching game...");
@@ -39,6 +42,7 @@ const GameCreationScreen = () => {
       .then(setIsGameStarted(true))
       .catch((error) => {
         console.error(error);
+        handleErrorMsg(error, setErrorMessage)
       });
   };
 
@@ -109,6 +113,7 @@ const GameCreationScreen = () => {
           : missingPlayers
           ? "En attente d'autres joueurs..."
           : "Tous les joueurs sont là !"}
+          {errorMessage ? errorMessage: null}
       </p>
       <h4 style={GameCreationScreenStyles.h4}>Mode de jeu</h4>
       <GameTypeGrid
@@ -139,6 +144,11 @@ const GameCreationScreen = () => {
           <p style={GameCreationScreenStyles.codeCopiedText}>📋 Code copié dans le presse-papiers !</p>
         </>
           )}
+        {errorMessage && (
+        <>
+          <p style={GameCreationScreenStyles.smallText}>Erreur : {errorMessage}</p>
+        </>
+      )}
     </div>
   );
 };

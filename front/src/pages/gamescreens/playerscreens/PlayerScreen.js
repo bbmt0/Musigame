@@ -8,6 +8,7 @@ import AppButton from "../../../components/AppButton";
 import Spacer from "../../../components/Spacer";
 import colors from "../../../assets/styles/colors";
 import MusicDisplayerCard from "../../../components/MusicDisplayerCard";
+import { handleErrorMsg } from "../../../utils/errormessage";
 import axios from "axios";
 
 export const PlayerScreen = ({ playerData, roomData }) => {
@@ -25,6 +26,7 @@ export const PlayerScreen = ({ playerData, roomData }) => {
   const [songSearch, setSongSearch] = useState("");
   const [selectedSong, setSelectedSong] = useState("");
   const [songsData, setSongsData] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSongSearchChange = (event) => {
     setSongSearch(event.target.value);
@@ -35,6 +37,7 @@ export const PlayerScreen = ({ playerData, roomData }) => {
       })
       .catch((error) => {
         console.error(error);
+        handleErrorMsg(error, setErrorMessage)
       });
   };
   const handleSelectedSong = (song) => {
