@@ -6,6 +6,7 @@ import AppButton from "../../components/AppButton";
 import InputTextBox from "../../components/InputTextBox";
 import styles from "./WelcomeScreenStyles";
 import Spacer from "../../components/Spacer";
+import { handleErrorMsg } from "../../utils/errormessage";
 
 export const WelcomeScreen = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ export const WelcomeScreen = () => {
   const [allAvatars, setAllAvatars] = useState([]);
   const [roomData, setRoomData] = useState({});
   const [code, setCode] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/v1/images")
@@ -35,9 +37,9 @@ export const WelcomeScreen = () => {
 
   useEffect(() => {
     if (roomData.roomId !== undefined) {
-      navigate("/waiting", {
-        state: { roomData: roomData, playerData: player },
-      });
+       navigate("/waiting", {
+         state: { roomData: roomData, playerData: player },
+       });
     }
   }, [roomData]);
 
@@ -54,6 +56,7 @@ export const WelcomeScreen = () => {
       })
       .catch((error) => {
         console.error(error);
+        handleErrorMsg(error, setErrorMessage);
       });
   };
 
@@ -64,13 +67,14 @@ export const WelcomeScreen = () => {
    const handleJoinGame = () => {
     axios
       .put("http://localhost:8080/api/v1/rooms/" + code + "/join", player)
-      .then((response) => {
-        navigate("/waiting", {
-          state: { roomData: response.data, playerData: player },
-        });
-      })
+       .then((response) => {
+         navigate("/waiting", {
+           state: { roomData: response.data, playerData: player },
+         });
+       })
       .catch((error) => {
         console.error(error);
+        handleErrorMsg(error, setErrorMessage);
       });
   };
 
@@ -135,8 +139,13 @@ export const WelcomeScreen = () => {
         title={"Rejoindre une partie"}
         bgColor={colors.MG_TEAL}
         color={"black"}
-        disabled={code.length !== 5}
+        disabled={code.length !== 5 | pseudo.length <= 3}
       ></AppButton>
+      {errorMessage && (
+        <>
+          <p style={styles.smallText}>Erreur : {errorMessage}</p>
+        </>
+      )}
     </div>
   );
 };
