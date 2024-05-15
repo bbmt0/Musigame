@@ -1,70 +1,30 @@
-# Getting Started with Create React App
+# Musigame Frontend
+## A new way of enjoying music
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Description
+Le Frontend de Musigame est le composant interface utilisateur de l'application Musigame. Il offre une expérience fluide et intuitive aux utilisateurs pour explorer et apprécier leur contenu musical préféré. Construit avec les technologies web modernes, le Frontend de Musigame propose un design élégant et réactif qui s'adapte à divers appareils et tailles d'écran. Il fait appel au bff pour toute la partie logique.
+⚠️ L'interface étant pensée PWA, il est important d'utiliser la visualisation smartphone proposée par les navigateurs web.
 
-## Available Scripts
 
-In the project directory, you can run:
+### Installation
+- Assurez-vous d'avoir cloné le repository sur votre machine. 
+- Assurez-vous d'avoir Node.js (https://nodejs.org/en/download/) et npm installés sur votre machine.
+```shell
+node -v
+npm -v
+```
 
-### `npm start`
+### Exécution du projet
+Prérequis : le bff doit être en cours d'exécution.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Ensuite, ouvrez un terminal et placez vous au niveau du dossier "front". Puis, installez les packages nécessaires et enfin démarrez le serveur de développement.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```shell
+cd front
+npm install
+npm start
+```
 
-### `npm test`
+Une nouvelle page de votre navigateur va alors s'ouvrir. Si ce n'est pas le cas, entrez l'adresse suivante dans votre barre de recherche : localhost:3000. 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Faites un clique droit sur la page, puis "inspecter l'élément" ou simplement "inspecter". Appuyez sur l'option pour passer le navigateur en mode smartphone, cette option varie selon le navigateur (pour Mozilla Firefox par exemple, il suffit d'appuyer sur l'icône smartphone/tablette en haut à droite de la barre inspecter l'élément.
