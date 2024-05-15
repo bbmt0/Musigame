@@ -3,6 +3,7 @@
 
 ### Description
 Le Frontend de Musigame est le composant interface utilisateur de l'application Musigame. Il offre une expérience fluide et intuitive aux utilisateurs pour explorer et apprécier leur contenu musical préféré. Construit avec les technologies web modernes, le Frontend de Musigame propose un design élégant et réactif qui s'adapte à divers appareils et tailles d'écran. Il fait appel au bff pour toute la partie logique.
+
 ⚠️ L'interface étant pensée PWA, il est important d'utiliser la visualisation smartphone proposée par les navigateurs web.
 
 
