@@ -26,20 +26,23 @@ public class RoomsService {
                 .roomId(roomId)
                 .creator(creator)
                 .currentRound(1)
+                .numberOfRound(null)
+                .rounds(null)
                 .game(Game.builder()
                         .gameType(null)
                         .isGameLaunched(false)
                         .build())
                 .players(new ArrayList<>(Collections.singletonList(creator)))
-                .rounds(generateRounds(creator))
                 .build();
         return repository.save(room);
     }
 
     @Nonnull
-    public Optional<Room> startGame(@NonNull Room room, GameType gameType) {
+    public Optional<Room> startGame(@NonNull Room room, GameType gameType, Integer numberOfRounds) {
         room.getGame().setGameLaunched(true);
         room.getGame().setGameType(gameType);
+        room.setNumberOfRound(numberOfRounds);
+        room.setRounds(generateRounds(room.getCreator(), numberOfRounds));
         return Optional.of(repository.save(room));
     }
 
@@ -96,15 +99,13 @@ public class RoomsService {
         return Optional.of(repository.save(room));
     }
 
-    private List<Round> generateRounds(Player player) {
-        List<Round> rounds = new ArrayList<>(3);
-        rounds.add(Round.builder().build());
-        rounds.add(Round.builder().build());
-        rounds.add(Round.builder().build());
+    private List<Round> generateRounds(Player player, Integer numberOfRounds) {
+        List<Round> rounds = new ArrayList<>(numberOfRounds);
+        for (int i = 0; i < numberOfRounds; i++) {
+            rounds.add(Round.builder().build());
+            rounds.get(i).setRoundNumber(i + 1);
+        }
         rounds.getFirst().setCurrentBoss(player);
-        rounds.getFirst().setRoundNumber(1);
-        rounds.get(1).setRoundNumber(2);
-        rounds.getLast().setRoundNumber(3);
         return rounds;
     }
 }

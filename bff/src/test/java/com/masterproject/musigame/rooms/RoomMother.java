@@ -38,20 +38,30 @@ public class RoomMother {
         return new Creator(player.getPlayerId(), player.getUsername(), player.getProfilePictureUrl(), player.getScore());
     }
 
-    public static List<Round> generateRounds(Creator creator) {
-        List<Round> rounds = new ArrayList<>(3);
-        rounds.add(Round.builder().build());
-        rounds.add(Round.builder().build());
-        rounds.add(Round.builder().build());
+    public static List<Round> generateRounds(Creator creator, Integer numberOfRounds) {
+        List<Round> rounds = new ArrayList<>(numberOfRounds);
+        for (int i = 0; i < numberOfRounds; i++) {
+            rounds.add(Round.builder().build());
+            rounds.get(i).setRoundNumber(i + 1);
+        }
         rounds.getFirst().setCurrentBoss(creator);
-        rounds.getFirst().setRoundNumber(1);
-        rounds.get(1).setRoundNumber(2);
-        rounds.getLast().setRoundNumber(3);
         return rounds;
     }
 
     public static String generatePlayerId() {
         return Arbitraries.strings().alpha().ofMinLength(5).ofMaxLength(5).sample();
+    }
+
+    public static Room generateRoomWithRoundsAndNumber(Room room, Integer numberOfRounds) {
+        return Room.builder()
+                .roomId(room.getRoomId())
+                .game(room.getGame())
+                .creator(room.getCreator())
+                .numberOfRound(numberOfRounds)
+                .currentRound(1)
+                .players(room.getPlayers())
+                .rounds(generateRounds(room.getCreator(), numberOfRounds))
+                .build();
     }
 
     public static Rooms.Builder roomBuilder() {
@@ -85,9 +95,10 @@ public class RoomMother {
             private RoomId roomId;
             private Game game = Game.builder().isGameLaunched(false).gameType(null).build();
             private Creator creator = generateCreator();
+            private Integer numberOfRounds = null;
             private Integer currentRound = 1;
             private List<Player> players = generatePlayersList();
-            private List<Round> rounds;
+            private List<Round> rounds = null;
 
 
             Builder() {
@@ -110,13 +121,11 @@ public class RoomMother {
             }
 
             public Room build() {
-                this.rounds = generateRounds(creator);
-                return Room.builder().roomId(roomId).game(game).creator(creator).currentRound(currentRound).players(players).rounds(rounds).build();
+                return Room.builder().roomId(roomId).game(game).creator(creator).numberOfRound(numberOfRounds).currentRound(currentRound).rounds(rounds).players(players).build();
             }
 
             public Room buildNoPlayers() {
-                this.rounds = generateRounds(creator);
-                return Room.builder().roomId(roomId).game(game).creator(creator).currentRound(1).players(Collections.singletonList(creator)).rounds(rounds).build();
+                return Room.builder().roomId(roomId).game(game).creator(creator).numberOfRound(numberOfRounds).currentRound(currentRound).rounds(rounds).players(Collections.singletonList(creator)).build();
             }
 
             private List<Player> generatePlayersList() {

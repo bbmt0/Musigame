@@ -42,7 +42,7 @@ public class RoomsController {
     }
 
     @PutMapping("/{roomId}/start")
-    public ResponseEntity<Object> startRoom(@PathVariable String roomId, @RequestParam String creatorId, @RequestParam GameType gameType) {
+    public ResponseEntity<Object> startRoom(@PathVariable String roomId, @RequestParam String creatorId, @RequestParam GameType gameType, @RequestParam Integer numberOfRounds) {
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
@@ -51,7 +51,7 @@ public class RoomsController {
         if (!creator.getPlayerId().equals(creatorId)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(NOT_CREATOR);
         }
-        var updatedRoom = service.startGame(room.get(), gameType);
+        var updatedRoom = service.startGame(room.get(), gameType, numberOfRounds);
         if (updatedRoom.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
         } else {
@@ -160,7 +160,7 @@ public class RoomsController {
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
         }
-        if (room.get().getCurrentRound()==3) {
+        if (room.get().getCurrentRound() == 3) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(GAME_ALREADY_FINISHED);
         }
         var nextBoss = room.get().getRounds().get(room.get().getCurrentRound()).getCurrentBoss();

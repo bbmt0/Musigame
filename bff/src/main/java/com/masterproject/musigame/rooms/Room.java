@@ -13,6 +13,7 @@ public class Room {
     private Game game;
     private Creator creator;
     private Integer currentRound;
+    private Integer numberOfRound;
     private List<Player> players;
     private List<Round> rounds;
 }

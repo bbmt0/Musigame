@@ -82,7 +82,7 @@ class RoomsServiceTests {
         var room = service.save(creator);
         room.getGame().setGameType(gameType);
 
-        var actual = service.startGame(room, gameType);
+        var actual = service.startGame(room, gameType, 3);
         assertThat(actual.get()).usingRecursiveComparison().ignoringFields("roomId.value").isEqualTo(room);
     }
 
@@ -90,7 +90,7 @@ class RoomsServiceTests {
     @Test
     @DisplayName("throws exception when room is null while starting game")
     void throwExceptionWhenRoomIsNullWhileStartingGame() {
-        assertThrows(IllegalArgumentException.class, () -> service.startGame(null, GameType.BOSS_SELECTION));
+        assertThrows(IllegalArgumentException.class, () -> service.startGame(null, GameType.BOSS_SELECTION,3));
     }
 
     @Test
@@ -98,6 +98,7 @@ class RoomsServiceTests {
     void submitSentence() {
         Creator creator = generateCreator();
         var room = service.save(creator);
+        room = generateRoomWithRoundsAndNumber(room, 3);
         room.getRounds().getFirst().setSentence("sentence");
 
 
@@ -162,6 +163,7 @@ class RoomsServiceTests {
     void submitSong() {
         Creator creator = generateCreator();
         var room = service.save(creator);
+        room = generateRoomWithRoundsAndNumber(room, 3);
         Song song = songBuilder().build();
         Player player = generatePlayer();
         room.getRounds().getFirst().setCurrentBoss(player);
@@ -207,6 +209,7 @@ class RoomsServiceTests {
     void selectSong() {
         Creator creator = generateCreator();
         var room = service.save(creator);
+        room = generateRoomWithRoundsAndNumber(room, 3);
         Song song = songBuilder().build();
         Player player = generatePlayer();
         var players = new ArrayList<>(room.getPlayers());
@@ -255,6 +258,7 @@ class RoomsServiceTests {
     void startNextRound() {
         Creator creator = generateCreator();
         var room = service.save(creator);
+        room = generateRoomWithRoundsAndNumber(room, 3);
         room.getRounds().getFirst().setCurrentBoss(creator);
         room.getRounds().getFirst().setWinningSong(Map.of(creator.getPlayerId(), songBuilder().build()));
 
