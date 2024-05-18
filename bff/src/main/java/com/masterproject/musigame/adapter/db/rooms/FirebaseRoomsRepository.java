@@ -30,6 +30,7 @@ public class FirebaseRoomsRepository implements RoomsRepository {
             roomData.put("id", room.getRoomId().getValue());
             roomData.put("game", room.getGame());
             roomData.put("creator", room.getCreator());
+            roomData.put("numberOfRounds", room.getNumberOfRound());
             roomData.put("currentRound", room.getCurrentRound());
             roomData.put("players", room.getPlayers());
             roomData.put("rounds", room.getRounds());
@@ -79,20 +80,21 @@ public class FirebaseRoomsRepository implements RoomsRepository {
     }
 
 
-
     private Room mapToRoom(DocumentSnapshot documentSnapshot, RoomId roomId) {
         Map<String, Object> data = documentSnapshot.getData();
         if (data != null) {
             Game game = extractGame(data);
             Creator creator = extractCreator(data);
             List<Player> players = extractPlayers(data);
-            List<Round> rounds = extractRounds(data);
+            List<Round> rounds = data.get("numberOfRounds") == null ? null : extractRounds(data);
+            Integer numberOfRounds = data.get("numberOfRounds") == null ? null : toIntExact((Long) data.get("numberOfRounds"));
             Integer currentRound = toIntExact((Long) data.get("currentRound"));
 
             return Room.builder()
                     .roomId(roomId)
                     .game(game)
                     .creator(creator)
+                    .numberOfRound(numberOfRounds)
                     .currentRound(currentRound)
                     .players(players)
                     .rounds(rounds)

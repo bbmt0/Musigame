@@ -86,11 +86,12 @@ class RoomsControllerTests {
         Room mockRoom = roomBuilder(ROOM_ID, creator, gameType).build();
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
-        when(service.startGame(mockRoom, gameType)).thenReturn(Optional.of(mockRoom));
+        when(service.startGame(mockRoom, gameType, 3)).thenReturn(Optional.of(mockRoom));
 
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
                         .param("creatorId", creator.getPlayerId())
-                        .param("gameType", gameType.name()))
+                        .param("gameType", gameType.name())
+                        .param("numberOfRounds", "3"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
@@ -107,7 +108,8 @@ class RoomsControllerTests {
 
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
                         .param("creatorId", creator.getPlayerId())
-                        .param("gameType", gameType.name()))
+                        .param("gameType", gameType.name())
+                        .param("numberOfRounds", "3"))
                 .andExpect(status().isNotFound());
     }
 
@@ -122,7 +124,8 @@ class RoomsControllerTests {
 
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
                         .param("creatorId", "wrongCreatorId")
-                        .param("gameType", gameType.name()))
+                        .param("gameType", gameType.name())
+                        .param("numberOfRounds", "3"))
                 .andExpect(status().isForbidden())
                 .andExpect(content().string("Player is not the creator"));
     }
@@ -135,11 +138,12 @@ class RoomsControllerTests {
         Room mockRoom = roomBuilder(ROOM_ID, creator).build();
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
-        when(service.startGame(mockRoom, gameType)).thenReturn(Optional.empty());
+        when(service.startGame(mockRoom, gameType, 3)).thenReturn(Optional.empty());
 
         mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/start", ROOM_ID.getValue())
                         .param("creatorId", creator.getPlayerId())
-                        .param("gameType", gameType.name()))
+                        .param("gameType", gameType.name())
+                        .param("numberOfRounds", "3"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -149,6 +153,7 @@ class RoomsControllerTests {
     void submitSentenceWithRoomIdCurrentBossIdRoundIdAndSentence(Integer roundId) throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         String sentence = "sentence";
         mockRoom.setCurrentRound(roundId);
         var roundIdMinusOne = roundId - 1;
@@ -190,6 +195,7 @@ class RoomsControllerTests {
     void submitSentenceWithWrongCurrentBossId() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         String sentence = "sentence";
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
@@ -207,6 +213,7 @@ class RoomsControllerTests {
     void submitSentenceWithWrongRoundId() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         String sentence = "sentence";
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
@@ -321,9 +328,9 @@ class RoomsControllerTests {
     void submitSongSuccessfully(Integer roundId) throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         Player player = RoomMother.generatePlayer();
         Song song = SongMother.songBuilder().build();
-        mockRoom.setCurrentRound(1);
 
         var players = new ArrayList<>(mockRoom.getPlayers());
         players.add(player);
@@ -332,19 +339,12 @@ class RoomsControllerTests {
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
 
+
+        var updatedRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
+
         if (mockRoom.getRounds().get(roundId - 1).getCurrentBoss() == null) {
             mockRoom.getRounds().get(roundId - 1).setCurrentBoss(creator);
         }
-
-
-        var updatedRoom = Room.builder()
-                .game(mockRoom.getGame())
-                .creator(mockRoom.getCreator())
-                .currentRound(mockRoom.getCurrentRound())
-                .roomId(mockRoom.getRoomId())
-                .players(mockRoom.getPlayers())
-                .rounds(generateRounds(creator))
-                .build();
 
         List<Map<String, Song>> songs = updatedRoom.getRounds().get(roundId - 1).getSongSuggestions() == null ?
                 new ArrayList<>() : updatedRoom.getRounds().get(roundId - 1).getSongSuggestions();
@@ -385,6 +385,7 @@ class RoomsControllerTests {
     void submitSongWhenPlayerIsTheCurrentBoss() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         Player player = RoomMother.generatePlayer();
         Song song = SongMother.songBuilder().build();
 
@@ -408,6 +409,7 @@ class RoomsControllerTests {
     void submitSongWithWrongRoundId() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         Player player = RoomMother.generatePlayer();
         Song song = SongMother.songBuilder().build();
 
@@ -431,6 +433,7 @@ class RoomsControllerTests {
     void selectSongSuccessfully() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         Player player = RoomMother.generatePlayer();
         Song song = SongMother.songBuilder().build();
 
@@ -440,13 +443,9 @@ class RoomsControllerTests {
 
         when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
 
-        var updatedRoom = Room.builder()
-                .game(mockRoom.getGame())
-                .creator(mockRoom.getCreator())
-                .roomId(mockRoom.getRoomId())
-                .players(mockRoom.getPlayers())
-                .rounds(generateRounds(creator))
-                .build();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
+
+        var updatedRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
 
         List<Map<String, Song>> songs = updatedRoom.getRounds().getFirst().getSongSuggestions() == null ?
                 new ArrayList<>() : updatedRoom.getRounds().getFirst().getSongSuggestions();
@@ -490,6 +489,7 @@ class RoomsControllerTests {
     void selectSongWithWrongCurrentBossId() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         Player player = RoomMother.generatePlayer();
 
         var players = new ArrayList<>(mockRoom.getPlayers());
@@ -511,6 +511,7 @@ class RoomsControllerTests {
     void selectSongWithAlreadySelectedWinningSong() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         Player player = RoomMother.generatePlayer();
         Song song = SongMother.songBuilder().build();
 
@@ -539,6 +540,7 @@ class RoomsControllerTests {
     void selectSongWithWrongRoundId() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         Player player = RoomMother.generatePlayer();
 
         var players = new ArrayList<>(mockRoom.getPlayers());
@@ -560,6 +562,7 @@ class RoomsControllerTests {
     void startNextRoundSuccessfully() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         Player player = RoomMother.generatePlayer();
         Song song = SongMother.songBuilder().build();
 
@@ -632,6 +635,7 @@ class RoomsControllerTests {
     void startNextRoundWithWrongNextBossId() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         Player player = RoomMother.generatePlayer();
 
         var players = new ArrayList<>(mockRoom.getPlayers());
@@ -655,6 +659,7 @@ class RoomsControllerTests {
     void startNextRoundWithBadRequest() throws Exception {
         Creator creator = generateCreator();
         Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
         Player player = RoomMother.generatePlayer();
 
         var players = new ArrayList<>(mockRoom.getPlayers());
