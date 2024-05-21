@@ -37,7 +37,6 @@ export const PlayerScreen = ({ playerData, roomData }) => {
       })
       .catch((error) => {
         console.error(error);
-        handleErrorMsg(error, setErrorMessage);
       });
   };
   const handleSelectedSong = (song) => {
