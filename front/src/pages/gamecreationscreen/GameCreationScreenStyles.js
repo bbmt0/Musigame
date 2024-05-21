@@ -24,7 +24,25 @@ GameCreationScreenStyles.greenCodeText = {
 GameCreationScreenStyles.codeCopiedText = {
     color: 'white',
     fontSize: '1em', 
+    marginBottom: '5em'
 }
-
+GameCreationScreenStyles.roundSelection = {
+    color: 'white', 
+    fontSize: '1em'
+}
+GameCreationScreenStyles.roundsChoice = {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'baseline',
+    gap: '1em',
+}
+GameCreationScreenStyles.roundNumber = {
+    marginBottom: 0,
+    fontSize: '1.5em',
+}
+GameCreationScreenStyles.roundsText = {
+    marginBottom: '-0.5em',
+}
 
 export default GameCreationScreenStyles;

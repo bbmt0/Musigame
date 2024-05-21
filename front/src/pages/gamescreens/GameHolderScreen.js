@@ -16,7 +16,7 @@ export const GameHolderScreen = () => {
           .get("http://localhost:8080/api/v1/rooms/" + roomData.roomId.value)
           .then((response) => {
             setRoomData(response.data);
-            if (response.data.rounds[2].winningSong !== null) {
+            if (roomData.rounds[roomData.numberOfRound - 1].winningSong !== null) {
               navigate("/end-game", {
                 state: { roomData: response.data, playerData: playerData },
               });
@@ -32,7 +32,7 @@ export const GameHolderScreen = () => {
   }, [roomData]);
 
   const isRoundEnded = () => {
-    if (roomData.currentRound < 3) {
+    if (roomData.currentRound < roomData.numberOfRound) {
       return roomData.rounds[roomData.currentRound].currentBoss !== null;
     }
   };

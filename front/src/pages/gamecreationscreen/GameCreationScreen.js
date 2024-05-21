@@ -23,6 +23,7 @@ const GameCreationScreen = () => {
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isCodeCopied, setIsCodeCopied] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [rounds, setRounds] = useState('3');
 
   const launchGame = () => {
     console.log("Launching game...");
@@ -36,6 +37,7 @@ const GameCreationScreen = () => {
           params: {
             creatorId: playerData.playerId,
             gameType: selectedGameType.value,
+            numberOfRounds: rounds
           },
         }
       )
@@ -121,6 +123,16 @@ const GameCreationScreen = () => {
         selectedGameType={selectedGameType}
         setSelectedGameType={setSelectedGameType}
       />
+      {isCreator && (
+        <div style={GameCreationScreenStyles.roundSelection}>
+          <p style={GameCreationScreenStyles.roundsText}> Nombre de rounds : </p>
+          <div style={GameCreationScreenStyles.roundsChoice}>
+            <AppButton title='-' bgColor={colors.MG_TEAL} width={5} onClick={() => setRounds(rounds > 1 ? rounds - 1 : 1)} />
+            <p style={GameCreationScreenStyles.roundNumber}>{rounds}</p>
+            <AppButton title='+' bgColor={colors.MG_TEAL} width={5} onClick={() => setRounds(parseInt(rounds) + 1)}/>
+          </div>
+        </div>
+      )}
       {!isGameStarted && (
         <div style={GameCreationScreenStyles.buttonContainer}>
           <AppButton
