@@ -28,6 +28,9 @@ const styles = {
         alignItems: 'center',
         backgroundSize: 'cover',
         height: '100vh',
+        width: '100vw',
+        paddingBottom: '6em'
+
     },
     links: {
         color: 'white', 

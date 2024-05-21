@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AppButton = ({ title, bgColor, color, disabled, onClick }) => {
+const AppButton = ({ title, bgColor, color, disabled, onClick, width }) => {
     const styles = {
         display: 'flex',
         alignItems: 'center',
@@ -10,7 +10,7 @@ const AppButton = ({ title, bgColor, color, disabled, onClick }) => {
         border: 'none',
         cursor: disabled ? 'not-allowed' : 'pointer',
         height: '2em',
-        width: '12em',
+        width: width ? width : '12em',
         fontSize: '1.1em',
         marginTop: '0.5em',
         fontFamily: 'Nova Square',
