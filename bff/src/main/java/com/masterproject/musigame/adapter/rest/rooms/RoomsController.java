@@ -29,7 +29,7 @@ public class RoomsController {
     private static final String ROUND_IS_NOT_CURRENT = "Round is not current";
     private static final String WINNING_SONG_ALREADY_SELECTED = "Winning song already selected";
     private static final String GAME_ALREADY_FINISHED = "Game already finished";
-
+    private static final String PLAYER_NOT_FOUND = "Player not found";
 
     @GetMapping("/{roomId}")
     public ResponseEntity<Object> getRoomById(@PathVariable String roomId) {
@@ -130,6 +130,28 @@ public class RoomsController {
         }
     }
 
+    @DeleteMapping("/{roomId}/players/{playerId}")
+    public ResponseEntity<Object> removePlayer(@PathVariable String roomId, @PathVariable String playerId) {
+        var room = retrieveRoom(roomId);
+        if (room.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
+        }
+        if (room.get().getGame().isGameLaunched()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(GAME_ALREADY_STARTED);
+        }
+        var player = room.get().getPlayers().stream()
+                .filter(p -> p.getPlayerId().equals(playerId))
+                .findFirst();
+        if (player.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(PLAYER_NOT_FOUND);
+        }
+        var updatedRoom = service.removePlayer(room.get(), player.get());
+        if (updatedRoom.isPresent()) {
+            return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
     @PutMapping("/{roomId}/select-song")
     public ResponseEntity<Object> selectSong(@PathVariable String roomId, @RequestParam String currentBossId, @RequestParam String playerId, @RequestParam Integer roundId) {
         var room = retrieveRoom(roomId);
