@@ -81,15 +81,12 @@ export const WelcomeScreen = () => {
 
 
   const handleAvatarChange = () => {
-    if (avatarId + 1 === allAvatars.length) {
-      setAvatarId(1);
-    } else {
-      setAvatarId(avatarId + 1);
-    }
-    setAvatarUrl(allAvatars[avatarId].url);
-    setPlayer({ ...player, profilePictureUrl: allAvatars[avatarId].url });
+    const randomAvatarId = Math.floor(Math.random() * allAvatars.length);
+    setAvatarId(randomAvatarId);
+    setAvatarUrl(allAvatars[randomAvatarId].url);
+    setPlayer({ ...player, profilePictureUrl: allAvatars[randomAvatarId].url });
   };
-
+  
   return (
     <div style={styles.container}>
       <div style={styles.titles}>
