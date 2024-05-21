@@ -17,24 +17,30 @@ export const WelcomeScreen = () => {
   });
   const [pseudo, setPseudo] = useState(localStorage.getItem('username') || "");  
   const [avatarId, setAvatarId] = useState(1);
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState(localStorage.getItem('avatarUrl') || "");
   const [allAvatars, setAllAvatars] = useState([]);
   const [roomData, setRoomData] = useState({});
   const [code, setCode] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  
   useEffect(() => {
     axios
       .get("http://localhost:8080/api/v1/images")
       .then((response) => {
         setAllAvatars(response.data);
-        setAvatarUrl(response.data[0].url);
-        setPlayer({ ...player, profilePictureUrl: response.data[0].url });
+        const savedAvatarUrl = localStorage.getItem('avatarUrl');
+        if (savedAvatarUrl) {
+          setAvatarUrl(savedAvatarUrl);
+          setPlayer({ ...player, profilePictureUrl: savedAvatarUrl });
+        } else {
+          setAvatarUrl(response.data[0].url);
+          setPlayer({ ...player, profilePictureUrl: response.data[0].url });
+        }
       })
       .catch((error) => {
-        console.error(error);
+        handleErrorMsg(error, setErrorMessage);
       });
   }, []);
-
   useEffect(() => {
     if (roomData.roomId !== undefined) {
        navigate("/waiting", {
@@ -79,15 +85,13 @@ export const WelcomeScreen = () => {
       });
   };
 
-
   const handleAvatarChange = () => {
-    if (avatarId + 1 === allAvatars.length) {
-      setAvatarId(1);
-    } else {
-      setAvatarId(avatarId + 1);
-    }
-    setAvatarUrl(allAvatars[avatarId].url);
-    setPlayer({ ...player, profilePictureUrl: allAvatars[avatarId].url });
+    const randomAvatarId = Math.floor(Math.random() * allAvatars.length);
+    const newAvatarUrl = allAvatars[randomAvatarId].url;
+    setAvatarId(localStorage.getItem('avatarUrl') || randomAvatarId);
+    setAvatarUrl(allAvatars[randomAvatarId].url);
+    setPlayer({ ...player, profilePictureUrl: allAvatars[randomAvatarId].url });
+    localStorage.setItem('avatarUrl', newAvatarUrl);
   };
 
   return (
