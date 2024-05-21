@@ -15,7 +15,7 @@ export const WelcomeScreen = () => {
     profilePictureUrl: "",
     username: "",
   });
-  const [pseudo, setPseudo] = useState("");
+  const [pseudo, setPseudo] = useState(localStorage.getItem('username') || "");  
   const [avatarId, setAvatarId] = useState(1);
   const [avatarUrl, setAvatarUrl] = useState("");
   const [allAvatars, setAllAvatars] = useState([]);
@@ -46,6 +46,7 @@ export const WelcomeScreen = () => {
   const handlePseudoChange = (event) => {
     setPseudo(event.target.value);
     setPlayer({ ...player, username: event.target.value });
+    localStorage.setItem("username", event.target.value);
   };
 
   const handleCreateGame = () => {
