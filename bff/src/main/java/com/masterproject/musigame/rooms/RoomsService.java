@@ -80,7 +80,7 @@ public class RoomsService {
                 .filter(p -> p.getPlayerId().equals(playerId))
                 .findFirst()
                 .orElseThrow();
-        if (roundId < 3) {
+        if (roundId < room.getNumberOfRound()) {
             room.getRounds().get(roundId).setCurrentBoss(nextBoss);
         }
         return Optional.of(repository.save(room));
