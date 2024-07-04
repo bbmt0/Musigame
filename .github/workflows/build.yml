@@ -82,11 +82,6 @@ jobs:
           name: bff-jar
           path: build/libs/
 
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       - name: Deploy Backend to Azure
         uses: azure/webapps-deploy@v2
         with:
