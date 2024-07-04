@@ -61,18 +61,25 @@ dependencies {
     implementation "com.google.firebase:firebase-admin:${firebaseVersion}"
     implementation "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
 
-
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation "net.jqwik:jqwik:${jqwikVersion}"
-
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
+jar {
+    archiveBaseName.set('musigame-bff')
+    archiveVersion.set(version)
+    manifest {
+        attributes(
+                'Main-Class': 'com.masterproject.musigame.Application'
+        )
+    }
+}
 
 jacocoTestReport {
     getExecutionData().setFrom(fileTree(layout.buildDirectory.asFile.get()).include("/jacoco/*.exec"))
