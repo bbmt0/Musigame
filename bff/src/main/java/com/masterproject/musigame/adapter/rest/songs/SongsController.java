@@ -18,7 +18,7 @@ public class SongsController {
     private final SongsService service;
 
     @GetMapping("/{keyword}")
-    public ResponseEntity<Object> getRoomById(@PathVariable String keyword) {
+    public ResponseEntity<Object> getRoomById(@PathVariable("keyword") String keyword) {
         var songs = service.findByKeyword(keyword);
         if (songs.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(songs);

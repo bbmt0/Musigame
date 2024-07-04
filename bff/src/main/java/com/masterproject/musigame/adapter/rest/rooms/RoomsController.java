@@ -32,7 +32,7 @@ public class RoomsController {
 
 
     @GetMapping("/{roomId}")
-    public ResponseEntity<Object> getRoomById(@PathVariable String roomId) {
+    public ResponseEntity<Object> getRoomById(@PathVariable("roomId") String roomId) {
         var room = retrieveRoom(roomId);
         if (room.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(room);
@@ -42,7 +42,7 @@ public class RoomsController {
     }
 
     @PutMapping("/{roomId}/start")
-    public ResponseEntity<Object> startRoom(@PathVariable String roomId, @RequestParam String creatorId, @RequestParam GameType gameType, @RequestParam Integer numberOfRounds) {
+    public ResponseEntity<Object> startRoom(@PathVariable("roomId") String roomId, @RequestParam("creatorId") String creatorId, @RequestParam("gameType") GameType gameType, @RequestParam("numberOfRounds") Integer numberOfRounds) {
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
@@ -66,7 +66,7 @@ public class RoomsController {
     }
 
     @PutMapping("/{roomId}/submit-sentence")
-    public ResponseEntity<Object> submitSentence(@PathVariable String roomId, @RequestParam String currentBossId, @RequestParam Integer roundId, @RequestParam String sentence) {
+    public ResponseEntity<Object> submitSentence(@PathVariable("roomId") String roomId, @RequestParam("currentBossId") String currentBossId, @RequestParam("roundId") Integer roundId, @RequestParam("sentence") String sentence) {
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
@@ -87,7 +87,7 @@ public class RoomsController {
     }
 
     @PutMapping("/{roomId}/submit-song")
-    public ResponseEntity<Object> submitSong(@PathVariable String roomId, @RequestParam String playerId, @RequestParam Integer roundId, @RequestBody Song song) {
+    public ResponseEntity<Object> submitSong(@PathVariable("roomId") String roomId, @RequestParam("playerId") String playerId, @RequestParam("roundId") Integer roundId, @RequestBody Song song) {
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
@@ -108,7 +108,7 @@ public class RoomsController {
     }
 
     @PutMapping("/{roomId}/join")
-    public ResponseEntity<Object> joinRoom(@PathVariable String roomId, @RequestBody Player player) {
+    public ResponseEntity<Object> joinRoom(@PathVariable("roomId") String roomId, @RequestBody Player player) {
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
@@ -131,7 +131,7 @@ public class RoomsController {
     }
 
     @PutMapping("/{roomId}/select-song")
-    public ResponseEntity<Object> selectSong(@PathVariable String roomId, @RequestParam String currentBossId, @RequestParam String playerId, @RequestParam Integer roundId) {
+    public ResponseEntity<Object> selectSong(@PathVariable("roomId") String roomId, @RequestParam("currentBossId") String currentBossId, @RequestParam("playerId") String playerId, @RequestParam("roundId") Integer roundId) {
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
@@ -155,7 +155,7 @@ public class RoomsController {
     }
 
     @PutMapping("/{roomId}/start-next-round")
-    public ResponseEntity<Object> startNextRound(@PathVariable String roomId, @RequestParam String nextBossId) {
+    public ResponseEntity<Object> startNextRound(@PathVariable("roomId") String roomId, @RequestParam("nextBossId") String nextBossId) {
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);

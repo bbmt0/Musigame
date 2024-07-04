@@ -19,7 +19,7 @@ public class ImagesController {
     private final ImagesService service;
 
     @GetMapping("/{imageId}")
-    public ResponseEntity<Object> getImageById(@PathVariable String imageId) {
+    public ResponseEntity<Object> getImageById(@PathVariable("imageId") String imageId) {
         var image = service.findById(ImageId.of(imageId));
         if (image.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(image);
@@ -27,7 +27,6 @@ public class ImagesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
     @GetMapping
     public ResponseEntity<Object> getAllImages() {
         return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
