@@ -8,7 +8,6 @@ import AppButton from "../../../components/AppButton";
 import Spacer from "../../../components/Spacer";
 import colors from "../../../assets/styles/colors";
 import MusicDisplayerCard from "../../../components/MusicDisplayerCard";
-import { handleErrorMsg } from "../../../utils/errormessage";
 import axios from "axios";
 
 export const PlayerScreen = ({ playerData, roomData }) => {
@@ -26,7 +25,6 @@ export const PlayerScreen = ({ playerData, roomData }) => {
   const [songSearch, setSongSearch] = useState("");
   const [selectedSong, setSelectedSong] = useState("");
   const [songsData, setSongsData] = useState([]);
-  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSongSearchChange = (event) => {
     setSongSearch(event.target.value);
@@ -87,7 +85,7 @@ export const PlayerScreen = ({ playerData, roomData }) => {
         }
       );
     }
-  }, [roomData]);
+  }, [roomData, isSongSubmitted, playerData.playerId]);
   const roundText =
     roomData.currentRound === 1
       ? "1er tour"
@@ -112,7 +110,7 @@ export const PlayerScreen = ({ playerData, roomData }) => {
           <p style={styles.smallText}>
             Le boss n'a pas encore soumis la situation.
           </p>
-          <img style={styles.gif} src={clockLoading} />
+          <img style={styles.gif} src={clockLoading} alt="Gif d'attente"/>
         </>
       )}
       {isSongSubmitted && (
@@ -122,7 +120,7 @@ export const PlayerScreen = ({ playerData, roomData }) => {
             pour la situation :
           </p>
           <p style={styles.situationText}>"{submittedSentence}"</p>
-          <img style={styles.gif} src={clockLoading} />
+          <img style={styles.gif} src={clockLoading} alt="Gif d'attente"/>
           <Spacer height={3} />
           <p style={styles.smallText}>
             Patiente, les autres joueurs sont encore en pleine réflexion !

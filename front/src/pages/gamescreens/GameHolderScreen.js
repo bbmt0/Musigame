@@ -29,7 +29,7 @@ export const GameHolderScreen = () => {
 
       return () => clearInterval(interval);
     }
-  }, [roomData]);
+  }, [roomData, navigate, playerData]);
 
   const isRoundEnded = () => {
     if (roomData.currentRound < roomData.numberOfRound) {
