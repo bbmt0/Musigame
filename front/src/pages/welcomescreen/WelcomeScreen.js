@@ -16,7 +16,7 @@ export const WelcomeScreen = () => {
     username: "",
   });
   const [pseudo, setPseudo] = useState(localStorage.getItem('username') || "");  
-  const [avatarId, setAvatarId] = useState(1);
+  // const [avatarId, setAvatarId] = useState(1);
   const [avatarUrl, setAvatarUrl] = useState(localStorage.getItem('avatarUrl') || "");
   const [allAvatars, setAllAvatars] = useState([]);
   const [roomData, setRoomData] = useState({});
@@ -40,14 +40,14 @@ export const WelcomeScreen = () => {
       .catch((error) => {
         handleErrorMsg(error, setErrorMessage);
       });
-  }, []);
+  }, [player]);
   useEffect(() => {
     if (roomData.roomId !== undefined) {
        navigate("/waiting", {
          state: { roomData: roomData, playerData: player },
        });
     }
-  }, [roomData]);
+  }, [roomData, navigate, player]);
 
   const handlePseudoChange = (event) => {
     setPseudo(event.target.value);
@@ -88,7 +88,7 @@ export const WelcomeScreen = () => {
   const handleAvatarChange = () => {
     const randomAvatarId = Math.floor(Math.random() * allAvatars.length);
     const newAvatarUrl = allAvatars[randomAvatarId].url;
-    setAvatarId(localStorage.getItem('avatarUrl') || randomAvatarId);
+   // setAvatarId(localStorage.getItem('avatarUrl') || randomAvatarId);
     setAvatarUrl(allAvatars[randomAvatarId].url);
     setPlayer({ ...player, profilePictureUrl: allAvatars[randomAvatarId].url });
     localStorage.setItem('avatarUrl', newAvatarUrl);

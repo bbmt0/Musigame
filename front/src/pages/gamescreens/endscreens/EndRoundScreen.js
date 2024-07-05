@@ -79,7 +79,7 @@ const EndRoundScreen = ({ playerData, roomData }) => {
           </p>
           <Spacer height={5} />
           <p style={styles.waitingText}> En attente du nouveau boss...</p>
-          <img style={styles.gif} src={clockLoading} />
+          <img style={styles.gif} src={clockLoading} alt="Gif d'attente" />
         </>
       )}
     </div>

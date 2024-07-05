@@ -54,7 +54,7 @@ const GameCreationScreen = () => {
     setTimeout(() => {
       setIsCodeCopied(false);
     }, 2500)
-  }, [])
+  }, [roomData.roomId.value])
 
   useEffect(() => {
     const defaultPlayer = {
@@ -93,7 +93,7 @@ const GameCreationScreen = () => {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [roomData]);
+  }, [roomData, navigate, playerData]);
 
   return (
     <div style={GameCreationScreenStyles.container}>

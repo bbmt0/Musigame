@@ -151,7 +151,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
             {submittedPlayerCount}/{roomData.players.length - 1} joueur(s) ont
             proposé une musique.
           </p>
-          <img style={styles.gif} src={clockLoading} />
+          <img style={styles.gif} src={clockLoading} alt="Chargement en cours" />
         </>
       )}
       {isSubmitted && areAllSongsSubmitted && (
