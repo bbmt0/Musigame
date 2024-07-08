@@ -141,6 +141,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: front-build
+          path: .
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
