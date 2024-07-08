@@ -48,7 +48,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
     } else {
       axios
         .put(
-          "http://localhost:8080/api/v1/rooms/" +
+          "http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" +
             roomData.roomId.value +
             "/submit-sentence",
           null,
@@ -69,7 +69,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
   const handleSelectWinningSong = () => {
     axios
       .put(
-        "http://localhost:8080/api/v1/rooms/" +
+        "http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" +
           roomData.roomId.value +
           "/select-song",
         null,

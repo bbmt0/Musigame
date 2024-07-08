@@ -13,7 +13,7 @@ export const GameHolderScreen = () => {
     if (roomData) {
       const interval = setInterval(() => {
         axios
-          .get("http://localhost:8080/api/v1/rooms/" + roomData.roomId.value)
+          .get("http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" + roomData.roomId.value)
           .then((response) => {
             setRoomData(response.data);
             if (roomData.rounds[roomData.numberOfRound - 1].winningSong !== null) {

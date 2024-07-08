@@ -29,7 +29,7 @@ const GameCreationScreen = () => {
     console.log("Launching game...");
     axios
       .put(
-        "http://localhost:8080/api/v1/rooms/" +
+        "http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" +
           roomData.roomId.value +
           "/start",
         null,
@@ -80,7 +80,7 @@ const GameCreationScreen = () => {
     if (roomData) {
       const interval = setInterval(() => {
         axios
-          .get("http://localhost:8080/api/v1/rooms/" + roomData.roomId.value)
+          .get("http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" + roomData.roomId.value)
           .then((response) => {
             setRoomData(response.data);
             if(response.data.game.gameLaunched) {

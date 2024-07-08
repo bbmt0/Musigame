@@ -20,7 +20,7 @@ const JoinGameScreen = () => {
 
   const joinGame = () => {
     axios
-      .put("http://localhost:8080/api/v1/rooms/" + code + "/join", playerData)
+      .put("http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" + code + "/join", playerData)
       .then((response) => {
         navigate("/waiting", {
           state: { roomData: response.data, playerData: playerData },
