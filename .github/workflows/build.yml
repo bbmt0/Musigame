@@ -138,9 +138,6 @@ jobs:
     needs: build-front
     steps:
       
-      - name: List files in build directory
-        run: ls -al front/build
-
       - name: pwd
         run: pwd
 
