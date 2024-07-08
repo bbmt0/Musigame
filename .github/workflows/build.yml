@@ -139,7 +139,7 @@ jobs:
     steps:
       
       - name: List files in build directory
-        run: ls -al build
+        run: ls -al front/build
 
       - name: pwd
         run: pwd
@@ -148,7 +148,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: front-build
-          path: build
+          path: front/build
 
       - name: Unzip artifact for deployment
         run: unzip ./front-build/*.zip -d ./front-build
