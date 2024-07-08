@@ -127,18 +127,22 @@ jobs:
         run: zip release.zip ./* -r
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: front-build
-          path: build
+          path: front/build/release.zip
 
   deploy-front:
     name: Deploy front
     runs-on: ubuntu-latest
     needs: build-front
     steps:
+      
+      - name: List files in build directory
+        run: ls -al build
+
       - name: Download build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v2
         with:
           name: front-build
           path: build
