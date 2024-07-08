@@ -144,7 +144,7 @@ jobs:
           path: ./build/
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
+        run: unzip front/build/release.zip
 
       - name: Deploy front to Azure Web App
         uses: azure/webapps-deploy@v2
