@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-backend:
-    name: Build and Deploy Backend
+    name: Build bff
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -46,7 +46,7 @@ jobs:
       - name: Ensure build directory exists
         run: mkdir -p build/libs
 
-      - name: Build and Test Backend
+      - name: Build and test bff
         run: ./gradlew clean build jacocoTestReport
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -72,10 +72,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
-  deploy-backend:
-    name: Deploy Backend
+  deploy-bff:
+    name: Deploy bff
     runs-on: ubuntu-latest
-    needs: build-backend
+    needs: build-bff
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -94,7 +94,7 @@ jobs:
       - name: List files after download
         run: ls -al build/libs/
 
-      - name: Deploy Backend to Azure
+      - name: Deploy bff to Azure
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'musigame-bff'
@@ -102,7 +102,7 @@ jobs:
           package: 'build/libs/*.jar'
 
   build-front:
-    name: Build and Deploy Front
+    name: Build and front
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -130,7 +130,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: front-build
-          path: front/build/
+          path: build
 
   deploy-front:
     name: Deploy front
@@ -141,14 +141,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: front-build
-          path: ./build/
+          path: ./front-build
 
       - name: Unzip artifact for deployment
-        run: unzip front/build/release.zip
+        run: unzip ./front-build/*.zip -d ./front-build
 
       - name: Deploy front to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'musigame-front'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_FRONT }}
-          package: '.'
+          package: ./front-build/build
