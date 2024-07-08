@@ -130,7 +130,6 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: front-build
-          path: front/build/release.zip
 
   deploy-front:
     name: Deploy front
@@ -140,6 +139,9 @@ jobs:
       
       - name: List files in build directory
         run: ls -al build
+
+      - name: pwd
+        run: pwd
 
       - name: Download build artifact
         uses: actions/download-artifact@v2
