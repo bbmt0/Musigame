@@ -8,7 +8,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build-backend:
+  build-bff:
     name: Build bff
     runs-on: ubuntu-latest
     defaults:
