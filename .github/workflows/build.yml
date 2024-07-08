@@ -130,7 +130,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: front-build
-          path: release.zip
+          path: front/build/
 
   deploy-front:
     name: Deploy front
@@ -141,7 +141,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: front-build
-          path: .
+          path: ./build/
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
