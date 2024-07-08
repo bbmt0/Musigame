@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin("http://www.musigame-front.azurewebsites.net")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
