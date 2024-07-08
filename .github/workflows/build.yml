@@ -130,6 +130,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: front-build
+          path: front/build
 
   deploy-front:
     name: Deploy front
