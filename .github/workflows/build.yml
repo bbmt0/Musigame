@@ -67,7 +67,7 @@ jobs:
           name: debug-build-libs
           path: bff/build/libs/
 
-      - name: Analyze Backend on SonarCloud
+      - name: Analyze bff on SonarCloud
         run: ./gradlew sonar
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -82,8 +82,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: List files before download
-        run: ls -al build/libs/
 
       - name: Download build artifact
         uses: actions/download-artifact@v2
