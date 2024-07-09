@@ -153,6 +153,11 @@ jobs:
           name: front-build
           path: front/build
 
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: Deploy front to Azure Web App
         uses: azure/webapps-deploy@v2
         with:
