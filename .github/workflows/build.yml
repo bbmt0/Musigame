@@ -97,7 +97,7 @@ jobs:
         with:
           app-name: 'musigame-bff'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BFF }}
-          package: 'bff/build/libs/musigame-0.0.1-SNAPSHOT.jar'
+          package: 'build/libs/musigame-0.0.1-SNAPSHOT.jar'
 
           
   build-front:
