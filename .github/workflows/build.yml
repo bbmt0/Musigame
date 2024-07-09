@@ -100,13 +100,8 @@ jobs:
           app-name: 'musigame-bff'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BFF }}
           package: 'build/libs/*.jar'
-      
-      - name: Set start up command to launch jar file
-        run : |
-            az webapp config set --resource-group musigame --name musigame-bff --startup-file "java -jar musigame-0.0.1-SNAPSHOT.jar"
-        env:
-            AZURE_WEBAPP_PUBLISH_PROFILE_BFF: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BFF }}
-        
+
+          
   build-front:
     name: Build front
     runs-on: ubuntu-latest
@@ -153,10 +148,6 @@ jobs:
           name: front-build
           path: front/build
 
-      - name: Azure login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy front to Azure Web App
         uses: azure/webapps-deploy@v2
