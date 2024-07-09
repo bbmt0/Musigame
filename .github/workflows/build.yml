@@ -83,7 +83,7 @@ jobs:
           fetch-depth: 0
 
       - name: List files before download
-        run: ls -al
+        run: ls -al build/libs/
 
       - name: Download build artifact
         uses: actions/download-artifact@v2
@@ -99,7 +99,7 @@ jobs:
         with:
           app-name: 'musigame-bff'
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BFF }}
-          package: 'build/libs/*.jar'
+          package: 'bff/build/libs/musigame-0.0.1-SNAPSHOT.jar'
 
           
   build-front:
