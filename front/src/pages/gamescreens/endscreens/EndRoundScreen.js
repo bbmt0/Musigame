@@ -14,7 +14,7 @@ const EndRoundScreen = ({ playerData, roomData }) => {
   const handleNewRound = () => {
     axios
       .put(
-        "http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" +
+        "https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" +
           roomData.roomId.value +
           "/start-next-round",
         null,

@@ -29,7 +29,7 @@ const GameCreationScreen = () => {
     console.log("Launching game...");
     axios
       .put(
-        "http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" +
+        "https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" +
           roomData.roomId.value +
           "/start",
         null,
@@ -80,7 +80,7 @@ const GameCreationScreen = () => {
     if (roomData) {
       const interval = setInterval(() => {
         axios
-          .get("http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" + roomData.roomId.value)
+          .get("https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" + roomData.roomId.value)
           .then((response) => {
             setRoomData(response.data);
             if(response.data.game.gameLaunched) {

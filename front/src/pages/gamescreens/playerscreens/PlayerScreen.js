@@ -29,7 +29,7 @@ export const PlayerScreen = ({ playerData, roomData }) => {
   const handleSongSearchChange = (event) => {
     setSongSearch(event.target.value);
     axios
-      .get("http://www.musigame-bff.azurewebsites.net/api/v1/songs/" + songSearch)
+      .get("https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/songs/" + songSearch)
       .then((response) => {
         setSongsData(response.data);
       })
@@ -48,7 +48,7 @@ export const PlayerScreen = ({ playerData, roomData }) => {
   const handleConfirmSelection = () => {
     axios
       .put(
-        "http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" +
+        "https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" +
           roomData.roomId.value +
           "/submit-song",
         {

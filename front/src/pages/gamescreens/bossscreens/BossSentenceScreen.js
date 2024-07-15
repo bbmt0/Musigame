@@ -48,7 +48,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
     } else {
       axios
         .put(
-          "http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" +
+          "https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" +
             roomData.roomId.value +
             "/submit-sentence",
           null,
@@ -69,7 +69,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
   const handleSelectWinningSong = () => {
     axios
       .put(
-        "http://www.musigame-bff.azurewebsites.net/api/v1/rooms/" +
+        "https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" +
           roomData.roomId.value +
           "/select-song",
         null,
