@@ -92,13 +92,18 @@ jobs:
       - name: List files after download
         run: ls -al build/libs/
 
-      - name: Deploy bff to Azure
-        uses: azure/webapps-deploy@v2
+      - name: Log in to Azure
+        uses: azure/login@v1
         with:
-          app-name: 'musigame-bff'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_BFF }}
-          package: 'build/libs/musigame-0.0.1-SNAPSHOT.jar'
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
+      - name: Deploy to prod with artifact
+        uses: azure/spring-cloud-deploy@v1
+        with:
+          azure-subscription : ${{ secrets.AZURE_SUBSCRIPTION }}
+          app-name: musigame-bff-spring
+          service-name: musigame-service
+          package: build/libs/musigame-0.0.1-SNAPSHOT.jar
           
   build-front:
     name: Build front
