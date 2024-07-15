@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-// @CrossOrigin("*")
+@CrossOrigin(origins = {"http://localhost:3000", "https://musigame-front.azurewebsites.net"})
 @Slf4j
 @RestController
 @RequiredArgsConstructor
