@@ -104,6 +104,7 @@ jobs:
           action: Deploy
           app-name: musigame-bff-spring
           service-name: musigame-bff-spring-apps
+          use-staging-deployment: false
           package: build/libs/musigame-0.0.1-SNAPSHOT.jar
           
   build-front:
