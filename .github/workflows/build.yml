@@ -101,8 +101,9 @@ jobs:
         uses: azure/spring-cloud-deploy@v1
         with:
           azure-subscription : ${{ secrets.AZURE_SUBSCRIPTION }}
+          action: Deploy
           app-name: musigame-bff-spring
-          service-name: musigame-service
+          service-name: musigame-bff-spring-apps
           package: build/libs/musigame-0.0.1-SNAPSHOT.jar
           
   build-front:
