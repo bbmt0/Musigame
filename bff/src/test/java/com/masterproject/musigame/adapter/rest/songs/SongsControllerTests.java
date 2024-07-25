@@ -48,4 +48,13 @@ class SongsControllerTests {
                 .andExpect(jsonPath("$[0].imageUrl").value(songs.getFirst().getImageUrl()))
         ;
     }
+
+    @Test
+    @DisplayName("return not found status when no songs match the keyword")
+    void returnNotFoundWhenNoSongsMatchKeyword() throws Exception {
+        String keyword = "nonexistent";
+        when(service.findByKeyword(keyword)).thenReturn(Optional.empty());
+        mvc.perform(MockMvcRequestBuilders.get("/api/v1/songs/{keyword}", keyword))
+                .andExpect(status().isNotFound());
+    }
 }

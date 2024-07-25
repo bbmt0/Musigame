@@ -227,6 +227,25 @@ class RoomsControllerTests {
     }
 
     @Test
+    @DisplayName("submit sentence failed with bad request http status")
+    void submitSentenceErrorBadRequest() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
+        String sentence = "sentence";
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+        when(service.submitSentence(mockRoom, 1, sentence)).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-sentence", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("roundId", "2")
+                        .param("sentence", sentence))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
     @DisplayName("join player to room with room id")
     void joinPlayerToRoomWithRoomId() throws Exception {
         Creator creator = generateCreator();
@@ -429,6 +448,26 @@ class RoomsControllerTests {
     }
 
     @Test
+    @DisplayName("submit a song failed with bad request http status")
+    void submitSongErrorBadRequest() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
+        String sentence = "sentence";
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+        when(service.submitSong(mockRoom, 1, creator.getPlayerId(), SongMother.songBuilder().build())).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/submit-song", ROOM_ID.getValue())
+                        .param("playerId", creator.getPlayerId())
+                        .param("roundId", "2")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(SongMother.songBuilder().build().toJson()))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
     @DisplayName("select a song successfully")
     void selectSongSuccessfully() throws Exception {
         Creator creator = generateCreator();
@@ -558,6 +597,24 @@ class RoomsControllerTests {
     }
 
     @Test
+    @DisplayName("select a song failed with bad request http status")
+    void selectSongErrorBadRequest() throws Exception {
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).build();
+        mockRoom = generateRoomWithRoundsAndNumber(mockRoom, 3);
+        String sentence = "sentence";
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+        when(service.selectSong(mockRoom, 1, creator.getPlayerId())).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/select-song", ROOM_ID.getValue())
+                        .param("currentBossId", creator.getPlayerId())
+                        .param("playerId", creator.getPlayerId())
+                        .param("roundId", "2"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     @DisplayName("start next round successfully")
     void startNextRoundSuccessfully() throws Exception {
         Creator creator = generateCreator();
@@ -677,6 +734,8 @@ class RoomsControllerTests {
                         .param("nextBossId", player.getPlayerId()))
                 .andExpect(status().isBadRequest());
     }
+
+
 
 
     static Room generateARoomFullOfPlayers() {

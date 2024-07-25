@@ -37,4 +37,12 @@ class GeniusSongsRepositoryTests {
     void throwsExceptionWhenKeywordIsNull() {
         assertThrows(IllegalArgumentException.class, () -> geniusSongsRepository.findByKeyword(null));
     }
-}
+
+    @Test
+    @DisplayName("return empty optional when WebClient response is empty")
+    void returnEmptyOptionalWhenWebClientResponseIsEmpty() {
+        var savedSong = geniusSongsRepository.findByKeyword("");
+        assertThat(savedSong.get()).isEmpty();
+    }
+    }
+

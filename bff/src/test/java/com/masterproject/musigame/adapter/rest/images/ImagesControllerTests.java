@@ -63,4 +63,15 @@ class ImagesControllerTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
+
+    @Test
+    @DisplayName("return not found status when image id does not exist")
+    void returnNotFoundWhenImageIdDoesNotExist() throws Exception {
+        String nonExistentImageId = "nonexistent";
+        when(service.findById(ImageId.of(nonExistentImageId))).thenReturn(Optional.empty());
+
+        mvc.perform(MockMvcRequestBuilders.get("/api/v1/images/{imageId}", nonExistentImageId))
+                .andExpect(status().isNotFound());
+    }
+
 }
