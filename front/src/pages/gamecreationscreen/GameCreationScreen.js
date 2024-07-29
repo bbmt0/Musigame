@@ -29,9 +29,7 @@ const GameCreationScreen = () => {
     console.log("Launching game...");
     axios
       .put(
-        "https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" +
-          roomData.roomId.value +
-          "/start",
+        `${process.env.REACT_APP_BFF_URL}/api/v1/rooms/${roomData.roomId.value}/start`,
         null,
         {
           params: {

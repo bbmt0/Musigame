@@ -25,8 +25,8 @@ export const WelcomeScreen = () => {
   
   useEffect(() => {
     axios
-      .get("https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/images")
-      .then((response) => {
+    .get(`${process.env.REACT_APP_BFF_URL}/api/v1/images`)
+    .then((response) => {
         setAllAvatars(response.data);
         const savedAvatarUrl = localStorage.getItem('avatarUrl');
         if (savedAvatarUrl) {
@@ -57,8 +57,8 @@ export const WelcomeScreen = () => {
 
   const handleCreateGame = () => {
     axios
-      .post("https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms", player)
-      .then((response) => {
+    .post(`${process.env.REACT_APP_BFF_URL}/api/v1/rooms`, player)
+    .then((response) => {
         setRoomData(response.data);
       })
       .catch((error) => {
@@ -73,8 +73,8 @@ export const WelcomeScreen = () => {
 
    const handleJoinGame = () => {
     axios
-      .put("https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" + code + "/join", player)
-       .then((response) => {
+    .put(`${process.env.REACT_APP_BFF_URL}/api/v1/rooms/${code}/join`, player)
+    .then((response) => {
          navigate("/waiting", {
            state: { roomData: response.data, playerData: player },
          });

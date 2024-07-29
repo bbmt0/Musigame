@@ -20,7 +20,7 @@ const JoinGameScreen = () => {
 
   const joinGame = () => {
     axios
-      .put("https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" + code + "/join", playerData)
+    .put(`${process.env.REACT_APP_BFF_URL}/api/v1/rooms/${code}/join`, playerData)      
       .then((response) => {
         navigate("/waiting", {
           state: { roomData: response.data, playerData: playerData },

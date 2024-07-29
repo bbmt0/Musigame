@@ -29,8 +29,8 @@ export const PlayerScreen = ({ playerData, roomData }) => {
   const handleSongSearchChange = (event) => {
     setSongSearch(event.target.value);
     axios
-      .get("https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/songs/" + songSearch)
-      .then((response) => {
+    .get(`${process.env.REACT_APP_BFF_URL}/api/v1/songs/${songSearch}`)
+    .then((response) => {
         setSongsData(response.data);
       })
       .catch((error) => {
@@ -48,9 +48,7 @@ export const PlayerScreen = ({ playerData, roomData }) => {
   const handleConfirmSelection = () => {
     axios
       .put(
-        "https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" +
-          roomData.roomId.value +
-          "/submit-song",
+        `${process.env.REACT_APP_BFF_URL}/api/v1/rooms/${roomData.roomId.value}/submit-song`,
         {
           songId: selectedSong.songId.value,
           title: selectedSong.title,
