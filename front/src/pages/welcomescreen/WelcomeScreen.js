@@ -40,7 +40,7 @@ export const WelcomeScreen = () => {
       .catch((error) => {
         handleErrorMsg(error, setErrorMessage);
       });
-  }, [player]);
+  }, []);
   useEffect(() => {
     if (roomData.roomId !== undefined) {
        navigate("/waiting", {
