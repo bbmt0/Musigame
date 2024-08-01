@@ -1,0 +1,68 @@
+name: Deploy to Azure
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+
+jobs:
+  deploy-bff:
+    name: Deploy bff
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: bff-jar
+          path: build/libs/
+
+      - name: List files after download
+        run: ls -al build/libs/
+
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to prod with artifact
+        uses: azure/spring-cloud-deploy@v1
+        with:
+          azure-subscription: ${{ secrets.AZURE_SUBSCRIPTION }}
+          action: Deploy
+          app-name: musigame-bff-spring
+          service-name: musigame-bff-spring-apps
+          use-staging-deployment: false
+          package: build/libs/musigame-0.0.1-SNAPSHOT.jar
+
+  deploy-front:
+    name: Deploy front
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: front-build
+          path: front/build
+
+      - name: Deploy front to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'musigame-front'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE_FRONT }}
+          package: front/build
