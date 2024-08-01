@@ -10,12 +10,12 @@ import { handleErrorMsg } from "../../utils/errormessage";
 
 export const WelcomeScreen = () => {
   const navigate = useNavigate();
+  const [pseudo, setPseudo] = useState(localStorage.getItem('username') || "");  
   const [player, setPlayer] = useState({
     playerId: crypto.randomUUID(),
     profilePictureUrl: "",
-    username: "",
+    username: pseudo,
   });
-  const [pseudo, setPseudo] = useState(localStorage.getItem('username') || "");  
   // const [avatarId, setAvatarId] = useState(1);
   const [avatarUrl, setAvatarUrl] = useState(localStorage.getItem('avatarUrl') || "");
   const [allAvatars, setAllAvatars] = useState([]);
@@ -31,7 +31,7 @@ export const WelcomeScreen = () => {
         const savedAvatarUrl = localStorage.getItem('avatarUrl');
         if (savedAvatarUrl) {
           setAvatarUrl(savedAvatarUrl);
-          setPlayer((prevPlayer) => ({ ...prevPlayer, profilePictureUrl: savedAvatarUrl }));
+          setPlayer((prevPlayer) => ({ ...prevPlayer, profilePictureUrl: savedAvatarUrl}));
         } else {
           const firstAvatarUrl = response.data[0].url;
           setAvatarUrl(firstAvatarUrl);
