@@ -13,8 +13,8 @@ export const GameHolderScreen = () => {
     if (roomData) {
       const interval = setInterval(() => {
         axios
-          .get("https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" + roomData.roomId.value)
-          .then((response) => {
+        .get(`${process.env.REACT_APP_BFF_URL}/api/v1/rooms/${roomData.roomId.value}`)
+        .then((response) => {
             setRoomData(response.data);
             if (roomData.rounds[roomData.numberOfRound - 1].winningSong !== null) {
               navigate("/end-game", {
