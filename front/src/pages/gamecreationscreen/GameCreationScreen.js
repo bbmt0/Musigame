@@ -78,8 +78,8 @@ const GameCreationScreen = () => {
     if (roomData) {
       const interval = setInterval(() => {
         axios
-          .get("https://musigame-bff-spring-apps-musigame-bff-spring.azuremicroservices.io/api/v1/rooms/" + roomData.roomId.value)
-          .then((response) => {
+        .get(`${process.env.REACT_APP_BFF_URL}/api/v1/rooms/${roomData.roomId.value}`)
+        .then((response) => {
             setRoomData(response.data);
             if(response.data.game.gameLaunched) {
               navigate("/game", { state: { roomData: response.data, playerData: playerData } });
@@ -88,7 +88,7 @@ const GameCreationScreen = () => {
           .catch((error) => {
             console.error(error);
           });
-      }, 1000);
+      }, 4000);
       return () => clearInterval(interval);
     }
   }, [roomData, navigate, playerData]);

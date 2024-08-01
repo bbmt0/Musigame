@@ -25,22 +25,24 @@ export const WelcomeScreen = () => {
   
   useEffect(() => {
     axios
-    .get(`${process.env.REACT_APP_BFF_URL}/api/v1/images`)
-    .then((response) => {
+      .get(`${process.env.REACT_APP_BFF_URL}/api/v1/images`)
+      .then((response) => {
         setAllAvatars(response.data);
         const savedAvatarUrl = localStorage.getItem('avatarUrl');
         if (savedAvatarUrl) {
           setAvatarUrl(savedAvatarUrl);
-          setPlayer({ ...player, profilePictureUrl: savedAvatarUrl });
+          setPlayer((prevPlayer) => ({ ...prevPlayer, profilePictureUrl: savedAvatarUrl }));
         } else {
-          setAvatarUrl(response.data[0].url);
-          setPlayer({ ...player, profilePictureUrl: response.data[0].url });
+          const firstAvatarUrl = response.data[0].url;
+          setAvatarUrl(firstAvatarUrl);
+          setPlayer((prevPlayer) => ({ ...prevPlayer, profilePictureUrl: firstAvatarUrl }));
         }
       })
       .catch((error) => {
         handleErrorMsg(error, setErrorMessage);
       });
   }, []);
+
   useEffect(() => {
     if (roomData.roomId !== undefined) {
        navigate("/waiting", {
@@ -51,7 +53,7 @@ export const WelcomeScreen = () => {
 
   const handlePseudoChange = (event) => {
     setPseudo(event.target.value);
-    setPlayer({ ...player, username: event.target.value });
+    setPlayer((prevPlayer) => ({ ...prevPlayer, username: event.target.value }));
     localStorage.setItem("username", event.target.value);
   };
 
@@ -90,7 +92,7 @@ export const WelcomeScreen = () => {
     const newAvatarUrl = allAvatars[randomAvatarId].url;
    // setAvatarId(localStorage.getItem('avatarUrl') || randomAvatarId);
     setAvatarUrl(allAvatars[randomAvatarId].url);
-    setPlayer({ ...player, profilePictureUrl: allAvatars[randomAvatarId].url });
+    setPlayer((prevPlayer) => ({ ...prevPlayer, profilePictureUrl: newAvatarUrl }));
     localStorage.setItem('avatarUrl', newAvatarUrl);
   };
 
