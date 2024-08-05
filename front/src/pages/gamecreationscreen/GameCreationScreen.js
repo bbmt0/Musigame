@@ -88,7 +88,7 @@ const GameCreationScreen = () => {
           .catch((error) => {
             console.error(error);
           });
-      }, 4000);
+      }, 6000);
       return () => clearInterval(interval);
     }
   }, [roomData, navigate, playerData]);
