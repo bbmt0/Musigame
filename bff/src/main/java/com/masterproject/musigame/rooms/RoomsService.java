@@ -94,6 +94,12 @@ public class RoomsService {
     }
 
     @Nonnull
+    public Optional<Room> removePlayer(@NonNull Room room, @NonNull Player player) {
+        room.getPlayers().remove(player);
+        return Optional.of(repository.save(room));
+    }
+
+    @Nonnull
     public Optional<Room> startNextRound(@NonNull Room room) {
         room.setCurrentRound(room.getCurrentRound() + 1);
         return Optional.of(repository.save(room));
