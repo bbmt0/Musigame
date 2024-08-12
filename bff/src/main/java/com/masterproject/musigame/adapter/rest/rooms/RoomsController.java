@@ -20,6 +20,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class RoomsController {
     private final RoomsService service;
     private static final String ROOM_NOT_FOUND = "Room not found";
+    private static final String PLAYER_NOT_FOUND = "Player not found";
     private static final String NOT_CREATOR = "Player is not the creator";
     private static final String NOT_CURRENT_BOSS = "Player is not the current boss";
     private static final String CURRENT_BOSS = "Player is the current boss";
@@ -29,10 +30,10 @@ public class RoomsController {
     private static final String ROUND_IS_NOT_CURRENT = "Round is not current";
     private static final String WINNING_SONG_ALREADY_SELECTED = "Winning song already selected";
     private static final String GAME_ALREADY_FINISHED = "Game already finished";
-    private static final String PLAYER_NOT_FOUND = "Player not found";
 
     @GetMapping("/{roomId}")
     public ResponseEntity<Object> getRoomById(@PathVariable("roomId") String roomId) {
+        System.out.println("RoomsController.getRoomById");
         var room = retrieveRoom(roomId);
         if (room.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(room);
@@ -43,6 +44,7 @@ public class RoomsController {
 
     @PutMapping("/{roomId}/start")
     public ResponseEntity<Object> startRoom(@PathVariable("roomId") String roomId, @RequestParam("creatorId") String creatorId, @RequestParam("gameType") GameType gameType, @RequestParam("numberOfRounds") Integer numberOfRounds) {
+        System.out.println("RoomsController.startRoom");
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
@@ -130,22 +132,20 @@ public class RoomsController {
         }
     }
 
-    @DeleteMapping("/{roomId}/players/{playerId}")
-    public ResponseEntity<Object> removePlayer(@PathVariable String roomId, @PathVariable String playerId) {
+    @PutMapping("/{roomId}/leave")
+    public ResponseEntity<Object> leaveRoom(@PathVariable("roomId") String roomId, @RequestParam("playerId") String playerId) {
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
         }
-        if (room.get().getGame().isGameLaunched()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(GAME_ALREADY_STARTED);
-        }
         var player = room.get().getPlayers().stream()
                 .filter(p -> p.getPlayerId().equals(playerId))
-                .findFirst();
-        if (player.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(PLAYER_NOT_FOUND);
+                .findFirst()
+                .orElse(null);
+        if (player == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(PLAYER_NOT_FOUND);
         }
-        var updatedRoom = service.removePlayer(room.get(), player.get());
+        var updatedRoom = service.leave(room.get(), player);
         if (updatedRoom.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).body(updatedRoom);
         } else {

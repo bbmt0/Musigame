@@ -341,6 +341,39 @@ class RoomsControllerTests {
                 .andExpect(content().string("Game already started"));
     }
 
+    @Test
+    @DisplayName("delete player from room successfully")
+    void deletePlayerFromRoomSuccessfully() throws Exception {
+
+        Creator creator = generateCreator();
+        Room mockRoom = roomBuilder(ROOM_ID, creator).buildNoPlayers();
+
+        when(service.findById(argThat(roomId -> roomId.getValue().equals(ROOM_ID.getValue())))).thenReturn(Optional.of(mockRoom));
+
+        var updatedRoom = Room.builder()
+                .game(mockRoom.getGame())
+                .creator(mockRoom.getCreator())
+                .roomId(mockRoom.getRoomId())
+                .players(mockRoom.getPlayers())
+                .rounds(mockRoom.getRounds())
+                .build();
+        var players = new ArrayList<>(updatedRoom.getPlayers());
+        var removedPlayer = players.getLast();
+        players.remove(removedPlayer);
+        updatedRoom.setPlayers(players);
+
+        when(service.leave(mockRoom, removedPlayer)).thenReturn(Optional.of(updatedRoom));
+
+        mvc.perform(MockMvcRequestBuilders.put("/api/v1/rooms/{roomId}/leave", ROOM_ID.getValue())
+                        .param("playerId", removedPlayer.getPlayerId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(removedPlayer)))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.roomId.value").value(ROOM_ID.getValue()))
+                .andExpect(jsonPath("$.players.length()").value(updatedRoom.getPlayers().size()));
+            }
+
     @ParameterizedTest
     @MethodSource("roundIdProvider")
     @DisplayName("submit a song successfully")
@@ -762,6 +795,7 @@ class RoomsControllerTests {
                 Arguments.of(3)
         );
     }
+
 
 
 }

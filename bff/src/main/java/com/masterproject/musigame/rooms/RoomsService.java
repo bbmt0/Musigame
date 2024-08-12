@@ -94,7 +94,7 @@ public class RoomsService {
     }
 
     @Nonnull
-    public Optional<Room> removePlayer(@NonNull Room room, @NonNull Player player) {
+    public Optional<Room> leave(@NonNull Room room, @NonNull Player player) {
         room.getPlayers().remove(player);
         return Optional.of(repository.save(room));
     }
