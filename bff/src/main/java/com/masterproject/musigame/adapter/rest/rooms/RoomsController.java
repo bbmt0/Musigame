@@ -133,15 +133,11 @@ public class RoomsController {
     }
 
     @PutMapping("/{roomId}/leave")
-    public ResponseEntity<Object> leaveRoom(@PathVariable("roomId") String roomId, @RequestParam("playerId") String playerId) {
+    public ResponseEntity<Object> leaveRoom(@PathVariable("roomId") String roomId, @RequestBody Player player) {
         var room = retrieveRoom(roomId);
         if (room.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ROOM_NOT_FOUND);
         }
-        var player = room.get().getPlayers().stream()
-                .filter(p -> p.getPlayerId().equals(playerId))
-                .findFirst()
-                .orElse(null);
         if (player == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(PLAYER_NOT_FOUND);
         }
