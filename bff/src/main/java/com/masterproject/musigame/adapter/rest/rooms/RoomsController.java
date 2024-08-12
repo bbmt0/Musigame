@@ -30,7 +30,7 @@ public class RoomsController {
     private static final String ROUND_IS_NOT_CURRENT = "Round is not current";
     private static final String WINNING_SONG_ALREADY_SELECTED = "Winning song already selected";
     private static final String GAME_ALREADY_FINISHED = "Game already finished";
-
+    private static final String PLAYER_NOT_FOUND = "Player not found";
 
     @GetMapping("/{roomId}")
     public ResponseEntity<Object> getRoomById(@PathVariable("roomId") String roomId) {
@@ -153,8 +153,6 @@ public class RoomsController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
-
     @PutMapping("/{roomId}/select-song")
     public ResponseEntity<Object> selectSong(@PathVariable("roomId") String roomId, @RequestParam("currentBossId") String currentBossId, @RequestParam("playerId") String playerId, @RequestParam("roundId") Integer roundId) {
         var room = retrieveRoom(roomId);
