@@ -796,13 +796,6 @@ class RoomsControllerTests {
         );
     }
 
-    static Stream<Arguments> roomIdAndPlayerIdProvider() {
-        return Stream.of(
-                Arguments.of("roomId1", "playerId1"),
-                Arguments.of("roomId2", "playerId2"),
-                Arguments.of("roomId3", "playerId3")
-        );
-    }
 
 
 }
