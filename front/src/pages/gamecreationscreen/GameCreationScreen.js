@@ -25,6 +25,18 @@ const GameCreationScreen = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [rounds, setRounds] = useState('3');
 
+  const handleGoBack = async () => {
+    try {
+      await axios.put(
+        `${process.env.REACT_APP_BFF_URL}/api/v1/rooms/${roomData.roomId.value}/leave`,
+        playerData
+      );
+      navigate("/");
+    } catch (error) {
+      handleErrorMsg(error, setErrorMessage);
+      console.error("Failed to leave the room:", error);
+    }
+  }
   const launchGame = () => {
     console.log("Launching game...");
     axios
@@ -100,6 +112,7 @@ const GameCreationScreen = () => {
         title="Retour à l'accueil"
         bgColor="black"
         color="white"
+        onClick={handleGoBack}
       /> }
       <h4 style={GameCreationScreenStyles.h4}>Dans le salon</h4>
       <div style={GameCreationScreenStyles.code}>

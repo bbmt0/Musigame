@@ -8,7 +8,8 @@ const styles = {
     h2: {},
     h3: {
         color: 'white',
-        maxWidth: '50%'
+        maxWidth: '50%',
+        fontWeight: 'normal'
     },
     h4: {
         width: '85vw',

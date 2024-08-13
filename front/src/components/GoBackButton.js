@@ -2,12 +2,19 @@ import React from "react";
 import colors from "../assets/styles/colors";
 import { useNavigate } from "react-router-dom";
 
-const GoBackButton = ({ title, bgColor, color }) => {
+const GoBackButton = ({ title, bgColor, color, onClick }) => {
   const navigate = useNavigate();
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      navigate("/");
+    }
+  };
   return (
     <div style={styles.container}>
       <button
-        onClick={() => navigate("/")}
+        onClick={handleClick}
         style={{ ...styles, backgroundColor: bgColor, color: color }}
       >
         {title}
