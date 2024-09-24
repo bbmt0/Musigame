@@ -274,6 +274,33 @@ class RoomsServiceTests {
         assertThrows(IllegalArgumentException.class, () -> service.startNextRound(null));
     }
 
+    @Test
+    @DisplayName("remove a player from the room")
+    void removePlayerFromRoom() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        Player player = generatePlayer();
+        service.join(room, player);
+
+        var actual = service.leave(room, player);
+        assertThat(actual.get().getPlayers()).doesNotContain(player);
+    }
+
+    @Test
+    @DisplayName("throws exception when room is null while removing player")
+    void throwExceptionWhenRoomIsNullWhileRemovingPlayer() {
+        Player player = generatePlayer();
+        assertThrows(IllegalArgumentException.class, () -> service.leave(null, player));
+    }
+
+    @Test
+    @DisplayName("throws exception when player is null while removing player")
+    void throwExceptionWhenPlayerIsNullWhileRemovingPlayer() {
+        Creator creator = generateCreator();
+        var room = service.save(creator);
+        assertThrows(IllegalArgumentException.class, () -> service.leave(room, null));
+    }
+
 
     static Stream<Arguments> gameTypeProvider() {
         return Stream.of(
