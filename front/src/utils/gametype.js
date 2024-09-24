@@ -7,13 +7,13 @@ export const allGameTypes = [
       "Choisit la musique la plus adequate à la situation donnée par le boss",
   },
   {
-    value: "IMPOSTER",
-    icon: require("../assets/images/king-icon.png"),
-    title: "imposter",
-    description: "Bientot disponible",
+    value: "TOP_GUESS",
+    icon: require("../assets/images/top_guess.png"),
+    title: "top guess",
+    description: "Devine le top artiste d'un joueur en essayant de créer une liste qui pourrait passer pour la sienne",
   },
   {
-    value: "BATTLE",
+    value: "IMPOSTER",
     icon: require("../assets/images/king-icon.png"),
     title: "bientot disponible",
     description: "Bientot disponible",

@@ -88,7 +88,6 @@ export const WelcomeScreen = () => {
   const handleInputChange = (event) => {
     setCode(event.target.value);
   };
-
    const handleJoinGame = () => {
     axios
       .put(`${process.env.REACT_APP_BFF_URL}/api/v1/rooms/${code}/join`, player)

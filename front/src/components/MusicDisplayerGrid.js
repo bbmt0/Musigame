@@ -1,46 +1,44 @@
 import React from "react";
 import MusicDisplayerCard from "./MusicDisplayerCard";
 
-function MusicDisplayerGrid({ songsData, songsMapData, onSongSelect }) {
+function MusicDisplayerGrid({ type, data, onSelect }) {
   const styles = {
     musicGrid: {
-      display: "flex", 
-      flexDirection: "column", 
+      display: "flex",
+      flexDirection: "column",
       alignItems: "flex-start",
       gap: "0.5em",
-      marginTop: "0.8em",
+      marginTop: "0.5em",
       marginBottom: 0,
       maxHeight: "100%",
-      width: "60%"
+      maxWidth: "60%",
     },
   };
 
   return (
     <div style={styles.musicGrid}>
-      {songsData &&
-        songsData
-          .slice(0, 5)
-          .map((song) => (
+      {data &&
+        data.slice(0, 5).map((item) => {
+          const key = type === "music" ? item.songId?.value : item.artistId?.value;
+          const musicArtistNames = type === "music" ? item.artistNames : undefined;
+          const musicTitle = type === "music" ? item.title : undefined;
+          const musicImageUrl = type === "music" ? item.imageUrl : undefined;
+          const artistName = type === "artist" ? item.artistName : undefined;
+          const artistImageUrl = type === "artist" ? item.imageUrl : undefined;
+
+          return (
             <MusicDisplayerCard
-              key={song.songId.value}
-              musicArtistNames={song.artistNames}
-              musicTitle={song.title}
-              musicImageUrl={song.imageUrl}
-              onPress={() => onSongSelect(song)}
-            />
-          ))}
-      {songsMapData &&
-        songsMapData.slice(0, 5).map((songMap) =>
-          Object.entries(songMap).map(([key, song]) => (
-            <MusicDisplayerCard
+              type={type}
               key={key}
-              musicArtistNames={song.artistNames}
-              musicTitle={song.title}
-              musicImageUrl={song.imageUrl}
-              onPress={() => onSongSelect(key, song)}
+              musicArtistNames={musicArtistNames}
+              musicTitle={musicTitle}
+              musicImageUrl={musicImageUrl}
+              artistName={artistName}
+              artistImageUrl={artistImageUrl}
+              onPress={() => onSelect(item)}
             />
-          ))
-        )}
+          );
+        })}
     </div>
   );
 }

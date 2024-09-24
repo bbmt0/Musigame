@@ -72,7 +72,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
         {
           params: {
             currentBossId: playerData.playerId,
-            playerId: selectedPlayer  ,
+            playerId: selectedPlayer,
             roundId: roomData.currentRound,
           },
         }
@@ -91,7 +91,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
     const areAllSongsSubmittedInFirebase =
       roomData.rounds[roomData.currentRound - 1].songSuggestions &&
       roomData.rounds[roomData.currentRound - 1].songSuggestions.length ===
-        roomData.players.length - 1;
+      roomData.players.length - 1;
     setIsSubmitted(
       roomData.rounds[roomData.currentRound - 1].sentence !== null
     );
@@ -159,6 +159,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
           <p style={styles.situationText}>{sentence}</p>
           {!selectedSong ? (
             <MusicDisplayerGrid
+              type="music"
               songsMapData={allSongs}
               onSongSelect={handleSelectedSong}
             />
@@ -166,6 +167,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
             <>
               <Spacer height={2} />
               <MusicDisplayerCard
+                type="music"
                 musicArtistNames={selectedSong.artistNames}
                 musicTitle={selectedSong.title}
                 musicImageUrl={selectedSong.imageUrl}

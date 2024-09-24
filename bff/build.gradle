@@ -47,6 +47,7 @@ ext {
     apacheCommonsVersion = '3.14.0'
     lombokVersion = '1.18.30'
     jqwikVersion = '1.8.4'
+    socketVersion = '2.0.1'
     javaMainClass = "com.masterproject.musigame.Application"
 }
 apply plugin : "java"
@@ -60,6 +61,8 @@ dependencies {
     implementation "org.springframework:spring-webflux"
     implementation "com.google.firebase:firebase-admin:${firebaseVersion}"
     implementation "org.apache.commons:commons-lang3:${apacheCommonsVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation "io.socket:socket.io-client:${socketVersion}"
 
     annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 
