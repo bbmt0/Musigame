@@ -9,12 +9,13 @@ export const GameHolderScreen = () => {
   const navigate = useNavigate();
   const [roomData, setRoomData] = useState(location.state.roomData);
   const playerData = location.state.playerData;
+  const gameMode = roomData.game.gameType;
   useEffect(() => {
     if (roomData) {
       const interval = setInterval(() => {
         axios
-        .get(`${process.env.REACT_APP_BFF_URL}/api/v1/rooms/${roomData.roomId.value}`)
-        .then((response) => {
+          .get(`${process.env.REACT_APP_BFF_URL}/api/v1/rooms/${roomData.roomId.value}`)
+          .then((response) => {
             setRoomData(response.data);
             if (roomData.rounds[roomData.numberOfRound - 1].winningSong !== null) {
               navigate("/end-game", {
@@ -32,25 +33,34 @@ export const GameHolderScreen = () => {
   }, [roomData, navigate, playerData]);
 
   const isRoundEnded = () => {
-    if (roomData.currentRound < roomData.numberOfRound) {
+    if ((roomData.currentRound < roomData.numberOfRound) && (gameMode === "BOSS_SELECTION")) {
       return roomData.rounds[roomData.currentRound].currentBoss !== null;
     }
   };
 
   return (
     <>
-      {isRoundEnded() ? (
+      {gameMode === "BOSS_SELECTION" ? (
         <>
-          <EndRoundScreen playerData={playerData} roomData={roomData} />
+          {isRoundEnded() ? (
+            <EndRoundScreen playerData={playerData} roomData={roomData} />
+          ) : (
+            <>
+              {playerData.playerId ===
+                roomData.rounds[roomData.currentRound - 1].currentBoss.playerId ? (
+                <BossSentenceScreen playerData={playerData} roomData={roomData} />
+              ) : (
+                <PlayerScreen playerData={playerData} roomData={roomData} gameMode={gameMode} />
+              )}
+            </>
+          )}
+        </>
+      ) : gameMode === "TOP_GUESS" ? (
+        <>
+          <PlayerScreen playerData={playerData} roomData={roomData} gameMode={gameMode} />
         </>
       ) : (
         <>
-          {playerData.playerId ===
-          roomData.rounds[roomData.currentRound - 1].currentBoss.playerId ? (
-            <BossSentenceScreen playerData={playerData} roomData={roomData} />
-          ) : (
-            <PlayerScreen playerData={playerData} roomData={roomData} />
-          )}
         </>
       )}
     </>
