@@ -40,9 +40,8 @@ function MusicDisplayerCard({
           src={artistImageUrl}
           alt={artistName}          
 
-        />          <p style={styles.musicTitle}>{truncatedArtistName}</p>
-        <p>TEST</p>
-
+        />          
+        <p style={styles.artistName}>{truncatedArtistName}</p>
         </>
 
       )}
@@ -52,12 +51,6 @@ function MusicDisplayerCard({
             <p style={styles.musicTitle}>{truncatedTitle}</p>
             <p style={styles.musicArtist}>{truncatedArtistNames}</p>
           </>
-        )}
-        {type === "artist" && (
-          <>
-          <p>Test</p>          
-          </>
-
         )}
       </div>
     </div>
@@ -95,6 +88,11 @@ const styles = {
   musicArtist: {
     fontSize: "0.8em",
   },
+  artistName: {
+    fontSize: "1em",
+    fontWeight: "bold",
+    color: colors.MG_TEAL,
+  }
 };
 
 export default MusicDisplayerCard;

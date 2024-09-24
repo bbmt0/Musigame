@@ -1,20 +1,20 @@
 import React from "react";
 import MusicDisplayerCard from "./MusicDisplayerCard";
 
-function MusicDisplayerGrid({ type, data, onSelect }) {
+function MusicDisplayerGrid({ type, data, onSelect, gridColumns = 1 }) {
   const styles = {
     musicGrid: {
-      display: "flex",
+      display: "grid",
+      gridTemplateColumns: `repeat(${gridColumns}, 1fr)`,
       flexDirection: "column",
       alignItems: "flex-start",
       gap: "0.5em",
       marginTop: "0.5em",
       marginBottom: 0,
       maxHeight: "100%",
-      maxWidth: "60%",
+      maxWidth: "90%",
     },
   };
-
   return (
     <div style={styles.musicGrid}>
       {data &&

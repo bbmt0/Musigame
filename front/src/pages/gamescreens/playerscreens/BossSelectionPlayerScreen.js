@@ -141,7 +141,7 @@ export const BossSelectionPlayerScreen = ({ playerData, roomData }) => {
               <MusicDisplayerGrid
                 type="music"
                 songsData={songsData}
-                onSongSelect={handleSelectedSong}
+                onSelect={handleSelectedSong}
               />
             </>
           )}

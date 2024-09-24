@@ -30,6 +30,7 @@ export const PlayerScreenStyles = {
         display: 'flex', 
         justifyContent: 'space-between', 
         width: '70vw',
-    }
+    },
+    
 
 };
