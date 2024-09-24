@@ -11,7 +11,7 @@ public class Artist {
     String artistName;
     String imageUrl;
 
-    public String toJson() {
-        return "{\"songId\":\"" + artistId.getValue() + "\",\"artistName\":\"" + artistName + "\",\"imageUrl\":\"" + imageUrl + "\"}";
-    }
+   // public String toJson() {
+   //     return "{\"songId\":\"" + artistId.getValue() + "\",\"artistName\":\"" + artistName + "\",\"imageUrl\":\"" + imageUrl + "\"}";
+   // }
 }
