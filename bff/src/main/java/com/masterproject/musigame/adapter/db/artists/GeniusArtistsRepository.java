@@ -29,9 +29,9 @@ public class GeniusArtistsRepository implements ArtistsRepository {
                 .retrieve()
                 .bodyToMono(String.class)
                 .blockOptional();
-        if (response.isPresent()) {
-            var songs = GeniusApiArtistConverter.parseResponse(response.get());
-            return Optional.of(songs);
+        if (response.isPresent() && !response.get().isEmpty()) {
+            var artists = GeniusApiArtistConverter.parseResponse(response.get());
+            return artists.isEmpty() ? Optional.empty() : Optional.of(artists);
         } else {
             return Optional.empty();
         }
