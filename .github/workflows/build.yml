@@ -56,13 +56,13 @@ jobs:
         run: ls -al build/libs/
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: bff-jar
           path: bff/build/libs/musigame-0.0.1-SNAPSHOT.jar
 
       - name: Upload build artifacts for debugging
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: debug-build-libs
           path: bff/build/libs/
@@ -98,7 +98,7 @@ jobs:
         run: zip release.zip ./* -r
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: front-build
           path: front/build
