@@ -161,7 +161,7 @@ export const BossSentenceScreen = ({ playerData, roomData }) => {
             <MusicDisplayerGrid
               type="music"
               songsMapData={allSongs}
-              onSongSelect={handleSelectedSong}
+              onSelect={handleSelectedSong}
             />
           ) : (
             <>
