@@ -283,9 +283,10 @@ class RoomsServiceTests {
         service.join(room, player);
 
         var actual = service.leave(room, player);
+        assertThat(actual).isPresent();
+        assertThat(actual.get().getPlayers()).isNotEmpty();
         assertThat(actual.get().getPlayers()).doesNotContain(player);
     }
-
     @Test
     @DisplayName("throws exception when room is null while removing player")
     void throwExceptionWhenRoomIsNullWhileRemovingPlayer() {
